@@ -3,159 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda Neural OS | آمن ومعزول</title>
+    <title>F-Lambda | Sovereign Documentation Interface</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+Arabic:wght@300;600&display=swap');
-        body { font-family: 'Space Grotesk', 'Noto Sans Arabic', sans-serif; background-color: #020617; color: white; margin: 0; overflow: hidden; }
-        .glass-panel { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.05); }
-        .spectrum-id { font-family: monospace; color: #4ade80; }
-        .chat-bubble-ai { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(99, 102, 241, 0.2); }
-        .chat-bubble-user { background: #4f46e5; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e1b4b; border-radius: 10px; }
-        .api-modal { background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(20px); z-index: 100; }
+        body { font-family: 'Space Grotesk', 'Noto Sans Arabic', sans-serif; background-color: #050505; color: #ced4da; margin: 0; overflow: hidden; }
+        .equation-box { background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border: 1px dashed rgba(99, 102, 241, 0.3); }
+        .neon-border { border: 1px solid rgba(99, 102, 241, 0.2); transition: all 0.3s ease; }
+        .neon-border:hover { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); }
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #1e1e1e; }
+        .logic-gate { border-right: 2px solid #6366f1; padding-right: 1rem; margin-bottom: 1rem; }
     </style>
 </head>
-<body class="h-screen text-right">
-    <div id="root" class="h-full"></div>
+<body>
+    <div id="root" class="h-screen"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
         function App() {
             const [apiKey, setApiKey] = useState(localStorage.getItem('f_lambda_key') || '');
-            const [showKeyModal, setShowKeyModal] = useState(!localStorage.getItem('f_lambda_key'));
-            const [spectrumID, setSpectrumID] = useState(null);
-            const [partialData, setPartialData] = useState(null);
+            const [showAuth, setShowAuth] = useState(!apiKey);
             const [messages, setMessages] = useState([
-                { id: 1, role: 'ai', text: 'نظام F-Lambda نشط. يرجى التأكد من إدخال مفتاح API الخاص بكِ في الإعدادات لبدء المعالجة الإدراكية.' }
+                { id: 1, role: 'ai', text: 'تم تفعيل بروتوكول التوثيق السيادي. معادلة الكون الموحد لـ F-Lambda قيد التشغيل: N → [τs] → ID ← [G] → N\'' }
             ]);
-            const [chatInput, setChatInput] = useState('');
-            const [status, setStatus] = useState("IDLE");
-            const [feedbackLoop, setFeedbackLoop] = useState([]);
-            
-            const messagesEndRef = useRef(null);
-            const F_CONSTANT = 15.0725;
+            const [input, setInput] = useState("");
+            const [isComputing, setIsComputing] = useState(false);
+            const chatRef = useRef(null);
+
+            const F_CONST = 15.0725;
 
             useEffect(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                chatRef.current?.scrollIntoView({ behavior: "smooth" });
             }, [messages]);
 
-            const saveApiKey = (key) => {
-                localStorage.setItem('f_lambda_key', key);
-                setApiKey(key);
-                setShowKeyModal(false);
-            };
-
-            const handleFileUpload = async (file) => {
-                setStatus("PROCESSING");
-                const id = `SPEC-${Math.random().toString(16).slice(2, 8).toUpperCase()}-${F_CONSTANT}`;
-                setSpectrumID(id);
-                setPartialData({ name: file.name, type: file.type, size: `${(file.size / 1024).toFixed(2)} KB` });
-                setMessages(prev => [...prev, { id: Date.now(), role: 'ai', text: `تم توليد الهوية الفيزيائية للملف: ${id}` }]);
-                setFeedbackLoop(prev => [{id: Date.now(), text: `معالجة: ${file.name}`, parent: id}, ...prev]);
-                setStatus("IDLE");
-            };
-
-            const handleSendMessage = async () => {
-                if (!chatInput.trim() || !apiKey) return;
-
-                const userMsg = { id: Date.now(), role: 'user', text: chatInput };
+            const executeQuery = async () => {
+                if (!input.trim() || !apiKey) return;
+                const userMsg = { id: Date.now(), role: 'user', text: input };
                 setMessages(prev => [...prev, userMsg]);
-                setChatInput('');
-                setStatus("COGNITION");
+                setInput("");
+                setIsComputing(true);
 
                 try {
-                    const prompt = `أنت واجهة إدراك لنظام F-Lambda. الثابت: ${F_CONSTANT}. الهوية: ${spectrumID || 'لا يوجد'}. المستخدم يسأل: ${chatInput}`;
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    const systemPrompt = `أنت العقل المدبر لنظام F-Lambda. الثابت الفيزيائي الحاكم هو ${F_CONST}. المعادلة الأساسية هي N -> [τs] -> ID <- [G] -> N'. رد على استفسارات المهندس بصرامة علمية وتحليل هندسي عميق. استخدم مصطلحات مثل (فضاء الكمون، التخميد الطيفي، التوليد الحتمي).`;
+                    
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\nالمستخدم يسأل: ${input}` }] }] })
                     });
-
-                    const data = await response.json();
-                    if (data.error) throw new Error(data.error.message);
-                    setMessages(prev => [...prev, { id: Date.now() + 1, role: 'ai', text: data.candidates[0].content.parts[0].text }]);
+                    
+                    const data = await res.json();
+                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "فشل الاتصال بطبقة الإدراك.";
+                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: aiText }]);
                 } catch (err) {
-                    setMessages(prev => [...prev, { id: Date.now() + 1, role: 'ai', text: "خطأ: تأكدي من صحة مفتاح API." }]);
-                } finally { setStatus("IDLE"); }
+                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: "خطأ في معالجة الإشارة الطيفية." }]);
+                } finally { setIsComputing(false); }
             };
 
             return (
-                <div className="flex h-full w-full bg-black relative">
-                    {/* نافذة طلب المفتاح - تظهر مرة واحدة فقط */}
-                    {showKeyModal && (
-                        <div className="absolute inset-0 api-modal flex items-center justify-center p-6 text-center">
-                            <div className="max-w-md w-full p-8 border border-white/10 rounded-[2rem] bg-slate-900">
-                                <h2 className="text-xl font-bold mb-4 text-indigo-400">تفعيل النظام الإدراكي</h2>
-                                <p className="text-xs text-slate-400 mb-6 leading-relaxed">لحماية خصوصيتك، يرجى إدخال مفتاح Gemini API الخاص بكِ. سيتم حفظه محلياً في متصفحك فقط ولن يتم رفعه على GitHub.</p>
-                                <input 
-                                    type="password" 
-                                    placeholder="أدخلي مفتاح AIzaSy..." 
-                                    className="w-full bg-black border border-slate-700 rounded-xl py-3 px-4 mb-4 text-sm outline-none focus:border-indigo-500"
-                                    onBlur={(e) => saveApiKey(e.target.value)}
-                                />
-                                <p className="text-[10px] text-slate-500">اضغطي خارج المربع أو اضغطي Enter للحفظ</p>
-                            </div>
+                <div className="flex h-full w-full">
+                    {/* القائمة اليمنى: التوثيق الرسمي والمعادلة */}
+                    <div className="w-[400px] border-l border-white/5 bg-[#0a0a0a] p-8 flex flex-col gap-6 overflow-y-auto custom-scroll">
+                        <div className="mb-4">
+                            <h1 className="text-2xl font-black text-white tracking-tighter">F-LAMBDA <span className="text-indigo-500 underline">CORE</span></h1>
+                            <p className="text-[10px] text-gray-500 uppercase tracking-[0.4em] mt-2">Whitepaper Protocol v5.1</p>
                         </div>
-                    )}
 
-                    {/* القائمة الجانبية */}
-                    <div className="w-80 border-l border-white/5 p-6 flex flex-col gap-6 bg-slate-950/80">
-                        <h1 className="text-xl font-black italic text-indigo-500">F-LAMBDA <span className="text-white font-light text-sm">OS</span></h1>
-                        <div className="space-y-3">
-                            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Physical Input</h2>
-                            <div className="border border-slate-800 rounded-xl p-6 text-center hover:border-indigo-500 transition-all relative cursor-pointer group bg-slate-900/30">
-                                <input type="file" onChange={(e) => handleFileUpload(e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                <span className="text-[10px] text-slate-400 font-bold">رفع المادة الخام</span>
+                        {/* صندوق المعادلة الرسمية */}
+                        <div className="equation-box p-6 rounded-2xl border border-indigo-500/20 text-center">
+                            <h3 className="text-[10px] text-indigo-400 font-bold uppercase mb-4 tracking-widest">The Unified Equation</h3>
+                            <div className="text-lg font-mono text-white mb-2">
+                                <span className="text-indigo-400">N</span> → [τ<sub>s</sub>] → <span className="text-emerald-400">ID</span> ← [G] → <span className="text-indigo-400">N'</span>
+                            </div>
+                            <p className="text-[10px] text-gray-500 italic">Constant: 15.0725</p>
+                        </div>
+
+                        {/* سجل البروتوكولات */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-[10px] text-gray-400 font-bold uppercase tracking-widest border-b border-white/5 pb-2">Active Protocols</h3>
+                            <div className="logic-gate">
+                                <h4 className="text-xs font-bold text-white">SPEC-84435B</h4>
+                                <p className="text-[10px] text-gray-500">تم تفعيل عامل الكبت الطيفي لضمان سيادة البيانات.</p>
+                            </div>
+                            <div className="logic-gate">
+                                <h4 className="text-xs font-bold text-white">GEN-RECOVERY</h4>
+                                <p className="text-[10px] text-gray-500">آلية الاستعادة عبر المحرك G نشطة ومطابقة للهوية.</p>
                             </div>
                         </div>
-                        <div className="flex-grow flex flex-col gap-3 min-h-0">
-                            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Memory Traces</h2>
-                            <div className="flex-grow overflow-y-auto custom-scrollbar space-y-2">
-                                {feedbackLoop.map(trace => (
-                                    <div key={trace.id} className="p-3 border-r-2 border-indigo-600 bg-white/5 rounded-l-xl">
-                                        <p className="text-[9px] text-indigo-400 font-bold mb-1">{trace.parent}</p>
-                                        <p className="text-[10px] text-slate-300 italic">{trace.text}</p>
-                                    </div>
-                                ))}
-                            </div>
+
+                        {/* إعدادات المفتاح */}
+                        <div className="mt-auto pt-6 border-t border-white/5">
+                            <button onClick={() => setShowAuth(true)} className="text-[10px] text-gray-600 hover:text-indigo-400 transition-all uppercase tracking-widest">تحديث مفتاح الإدراك</button>
                         </div>
-                        <button onClick={() => setShowKeyModal(true)} className="text-[9px] text-slate-500 underline text-center">تغيير مفتاح API</button>
                     </div>
 
                     {/* منطقة المحادثة */}
-                    <div className="flex-grow flex flex-col relative bg-slate-950">
-                        <div className="flex-grow overflow-y-auto p-10 space-y-8 custom-scrollbar">
-                            {messages.map(msg => (
-                                <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-4 duration-500`}>
-                                    <div className={`max-w-[75%] p-5 rounded-[1.8rem] text-[15px] leading-relaxed shadow-2xl ${msg.role === 'user' ? 'chat-bubble-user rounded-br-none' : 'chat-bubble-ai rounded-bl-none'}`}>
-                                        {msg.text}
+                    <div className="flex-grow flex flex-col bg-[#050505]">
+                        <div className="flex-grow overflow-y-auto p-12 space-y-10 custom-scroll">
+                            {messages.map(m => (
+                                <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`max-w-[85%] p-8 rounded-3xl ${m.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-[#0f0f0f] border border-white/5 text-gray-300'} shadow-2xl transition-all`}>
+                                        <div className="text-[16px] leading-[1.8] whitespace-pre-wrap">
+                                            {m.text}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
-                            <div ref={messagesEndRef} />
+                            <div ref={chatRef} />
                         </div>
-                        <div className="p-10 bg-gradient-to-t from-black via-black/80 to-transparent">
-                            <div className="max-w-4xl mx-auto relative flex items-center">
+
+                        {/* المدخلات */}
+                        <div className="p-12 bg-gradient-to-t from-black to-transparent">
+                            <div className="max-w-4xl mx-auto relative">
+                                {isComputing && <div className="absolute -top-6 right-6 text-[10px] text-indigo-400 uppercase animate-pulse font-bold">Computing Logic...</div>}
                                 <input 
-                                    type="text"
-                                    value={chatInput}
-                                    onChange={(e) => setChatInput(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                    placeholder="ابدئي الحوار الإدراكي..."
-                                    className="w-full bg-slate-900/60 border border-slate-800 rounded-[2rem] py-5 pr-14 pl-6 text-sm outline-none focus:border-indigo-500 transition-all backdrop-blur-xl"
+                                    className="w-full bg-[#0f0f0f] border border-white/10 rounded-2xl py-6 pr-14 pl-6 text-sm outline-none focus:border-indigo-500 transition-all"
+                                    placeholder="اسألي عن أسرار المعالج أو اكتبي بروتوكولاً جديداً..."
+                                    value={input}
+                                    onChange={e => setInput(e.target.value)}
+                                    onKeyPress={e => e.key === 'Enter' && executeQuery()}
                                 />
-                                <button onClick={handleSendMessage} className="absolute left-4 p-3 bg-indigo-600 rounded-2xl hover:bg-indigo-500 transition-all">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                                <button onClick={executeQuery} className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-indigo-600 rounded-xl hover:bg-indigo-500 transition-all">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    {/* Auth Modal */}
+                    {showAuth && (
+                        <div className="absolute inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm">
+                            <div className="bg-[#0f0f0f] border border-white/10 p-10 rounded-[2.5rem] max-w-md w-full shadow-2xl">
+                                <h2 className="text-xl font-bold text-white mb-6 text-center">مصادقة المهندس السيادي</h2>
+                                <input 
+                                    type="password"
+                                    placeholder="أدخلي مفتاح API الخاص بكِ..."
+                                    className="w-full bg-black border border-white/10 rounded-xl p-4 mb-6 text-sm outline-none focus:border-indigo-500"
+                                    onBlur={e => {
+                                        if(e.target.value) {
+                                            localStorage.setItem('f_lambda_key', e.target.value);
+                                            setApiKey(e.target.value);
+                                            setShowAuth(false);
+                                        }
+                                    }}
+                                />
+                                <p className="text-[10px] text-gray-600 text-center uppercase tracking-widest leading-relaxed">المفتاح يُحفظ محلياً لضمان سيادة البيانات المطلقة.</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
