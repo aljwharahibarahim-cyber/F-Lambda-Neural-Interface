@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | Sovereign Documentation Interface</title>
+    <title>F-Lambda | Spectral Engineering Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+Arabic:wght@300;600&display=swap');
-        body { font-family: 'Space Grotesk', 'Noto Sans Arabic', sans-serif; background-color: #050505; color: #ced4da; margin: 0; overflow: hidden; }
-        .equation-box { background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border: 1px dashed rgba(99, 102, 241, 0.3); }
-        .neon-border { border: 1px solid rgba(99, 102, 241, 0.2); transition: all 0.3s ease; }
-        .neon-border:hover { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); }
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #1e1e1e; }
-        .logic-gate { border-right: 2px solid #6366f1; padding-right: 1rem; margin-bottom: 1rem; }
+        body { font-family: 'Space Grotesk', 'Noto Sans Arabic', sans-serif; background-color: #020202; color: #a1a1aa; margin: 0; overflow: hidden; }
+        .cyber-panel { background: rgba(10, 10, 10, 0.8); border: 1px solid #1e1e1e; backdrop-filter: blur(10px); }
+        .spectrum-bar { height: 4px; background: linear-gradient(90deg, #6366f1, #06b6d4, #6366f1); background-size: 200% 100%; animation: gradientMove 3s linear infinite; }
+        @keyframes gradientMove { 0% { background-position: 100% 0%; } 100% { background-position: -100% 0%; } }
+        .node-active { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); border-color: #6366f1; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        .latent-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; position: absolute; filter: blur(1px); }
     </style>
 </head>
-<body>
-    <div id="root" class="h-screen"></div>
+<body class="h-screen overflow-hidden">
+    <div id="root" class="h-full"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
@@ -29,19 +30,21 @@
             const [apiKey, setApiKey] = useState(localStorage.getItem('f_lambda_key') || '');
             const [showAuth, setShowAuth] = useState(!apiKey);
             const [messages, setMessages] = useState([
-                { id: 1, role: 'ai', text: 'تم تفعيل بروتوكول التوثيق السيادي. معادلة الكون الموحد لـ F-Lambda قيد التشغيل: N → [τs] → ID ← [G] → N\'' }
+                { id: 1, role: 'ai', text: 'تم استلام البريكول الهندسي. فضاء الكمون مستقر عند الثابت 15.0725. أنا جاهز لتحليل التحولات الطيفية العميقة.' }
             ]);
-            const [input, setInput] = useState("");
+            const [tauFactor, setTauFactor] = useState(1); // معامل تعديل التخميد
             const [isComputing, setIsComputing] = useState(false);
-            const chatRef = useRef(null);
+            const [input, setInput] = useState("");
+            const chatEndRef = useRef(null);
 
-            const F_CONST = 15.0725;
+            const BASE_CONST = 15.0725;
+            const currentTau = (BASE_CONST * tauFactor).toFixed(4);
 
             useEffect(() => {
-                chatRef.current?.scrollIntoView({ behavior: "smooth" });
+                chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
             }, [messages]);
 
-            const executeQuery = async () => {
+            const runSimulation = async () => {
                 if (!input.trim() || !apiKey) return;
                 const userMsg = { id: Date.now(), role: 'user', text: input };
                 setMessages(prev => [...prev, userMsg]);
@@ -49,86 +52,101 @@
                 setIsComputing(true);
 
                 try {
-                    const systemPrompt = `أنت العقل المدبر لنظام F-Lambda. الثابت الفيزيائي الحاكم هو ${F_CONST}. المعادلة الأساسية هي N -> [τs] -> ID <- [G] -> N'. رد على استفسارات المهندس بصرامة علمية وتحليل هندسي عميق. استخدم مصطلحات مثل (فضاء الكمون، التخميد الطيفي، التوليد الحتمي).`;
-                    
+                    const systemPrompt = `أنت العقل المدبر لنظام F-Lambda. الثابت الحالي بعد التعديل هو ${currentTau}. المعادلة: N -> [τs] -> ID <- [G] -> N'. حلل الأسئلة بناءً على مفاهيم "انهيار المعلومات" و"التخميد الطيفي" و"التوليد الحتمي".`;
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\nالمستخدم يسأل: ${input}` }] }] })
                     });
-                    
                     const data = await res.json();
-                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "فشل الاتصال بطبقة الإدراك.";
+                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "انقطاع في القنطرة الرياضية.";
                     setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: aiText }]);
-                } catch (err) {
-                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: "خطأ في معالجة الإشارة الطيفية." }]);
+                } catch (e) {
+                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: "خطأ في استقرار النواة." }]);
                 } finally { setIsComputing(false); }
             };
 
             return (
-                <div className="flex h-full w-full">
-                    {/* القائمة اليمنى: التوثيق الرسمي والمعادلة */}
-                    <div className="w-[400px] border-l border-white/5 bg-[#0a0a0a] p-8 flex flex-col gap-6 overflow-y-auto custom-scroll">
-                        <div className="mb-4">
-                            <h1 className="text-2xl font-black text-white tracking-tighter">F-LAMBDA <span className="text-indigo-500 underline">CORE</span></h1>
-                            <p className="text-[10px] text-gray-500 uppercase tracking-[0.4em] mt-2">Whitepaper Protocol v5.1</p>
+                <div className="flex h-full w-full bg-[#050505]">
+                    {/* اللوحة اليسرى: مختبر المحاكاة */}
+                    <div className="w-[380px] cyber-panel p-6 flex flex-col gap-8 z-10">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <div className="w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></div>
+                                <h1 className="text-white font-bold tracking-tighter text-xl italic">F-LAMBDA LAB</h1>
+                            </div>
+                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Spectral Engineering Unit</p>
                         </div>
 
-                        {/* صندوق المعادلة الرسمية */}
-                        <div className="equation-box p-6 rounded-2xl border border-indigo-500/20 text-center">
-                            <h3 className="text-[10px] text-indigo-400 font-bold uppercase mb-4 tracking-widest">The Unified Equation</h3>
-                            <div className="text-lg font-mono text-white mb-2">
-                                <span className="text-indigo-400">N</span> → [τ<sub>s</sub>] → <span className="text-emerald-400">ID</span> ← [G] → <span className="text-indigo-400">N'</span>
+                        {/* تحكم في الثابت τs */}
+                        <div className="space-y-4 bg-zinc-900/30 p-4 rounded-2xl border border-white/5">
+                            <div className="flex justify-between items-center text-[11px] font-bold">
+                                <span className="text-zinc-400 uppercase">Spectral Constant (τs)</span>
+                                <span className="text-indigo-400 font-mono text-sm">{currentTau}</span>
                             </div>
-                            <p className="text-[10px] text-gray-500 italic">Constant: 15.0725</p>
-                        </div>
-
-                        {/* سجل البروتوكولات */}
-                        <div className="flex flex-col gap-4">
-                            <h3 className="text-[10px] text-gray-400 font-bold uppercase tracking-widest border-b border-white/5 pb-2">Active Protocols</h3>
-                            <div className="logic-gate">
-                                <h4 className="text-xs font-bold text-white">SPEC-84435B</h4>
-                                <p className="text-[10px] text-gray-500">تم تفعيل عامل الكبت الطيفي لضمان سيادة البيانات.</p>
-                            </div>
-                            <div className="logic-gate">
-                                <h4 className="text-xs font-bold text-white">GEN-RECOVERY</h4>
-                                <p className="text-[10px] text-gray-500">آلية الاستعادة عبر المحرك G نشطة ومطابقة للهوية.</p>
+                            <input 
+                                type="range" min="0.5" max="2" step="0.1" value={tauFactor}
+                                onChange={(e) => setTauFactor(parseFloat(e.target.value))}
+                                className="w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <div className="flex justify-between text-[9px] text-zinc-600 font-bold">
+                                <span>انضغاط فائق (τs/2)</span>
+                                <span>توازن (1.0x)</span>
+                                <span>تفصيل عالٍ (τs*2)</span>
                             </div>
                         </div>
 
-                        {/* إعدادات المفتاح */}
-                        <div className="mt-auto pt-6 border-t border-white/5">
-                            <button onClick={() => setShowAuth(true)} className="text-[10px] text-gray-600 hover:text-indigo-400 transition-all uppercase tracking-widest">تحديث مفتاح الإدراك</button>
+                        {/* فضاء الكمون المرئي */}
+                        <div className="flex-grow flex flex-col gap-3 min-h-0">
+                            <h3 className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">Latent Space Visualization</h3>
+                            <div className="flex-grow bg-black rounded-2xl border border-zinc-800/50 relative overflow-hidden">
+                                {/* محاكاة نقاط البيانات في فضاء الكمون */}
+                                {[...Array(15)].map((_, i) => (
+                                    <div key={i} className="latent-dot" style={{
+                                        top: `${Math.random() * 80 + 10}%`,
+                                        left: `${Math.random() * 80 + 10}%`,
+                                        transform: `scale(${1.5 - (tauFactor * 0.5)})`,
+                                        opacity: 1 - (tauFactor * 0.3)
+                                    }}></div>
+                                ))}
+                                <div className="absolute bottom-4 left-4 text-[9px] text-indigo-500/50 font-mono">MAP_ID: SYN-C-4797</div>
+                            </div>
+                        </div>
+
+                        {/* المعادلة النشطة */}
+                        <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/20">
+                            <div className="text-[10px] text-indigo-400 font-bold mb-2">ACTIVE EQUATION</div>
+                            <div className="text-xs font-mono text-zinc-300">N → [{currentTau}] → ID ← [G]</div>
                         </div>
                     </div>
 
-                    {/* منطقة المحادثة */}
-                    <div className="flex-grow flex flex-col bg-[#050505]">
-                        <div className="flex-grow overflow-y-auto p-12 space-y-10 custom-scroll">
+                    {/* منطقة الحوار الإدراكي */}
+                    <div className="flex-grow flex flex-col relative">
+                        <div className="flex-grow overflow-y-auto p-10 space-y-8 custom-scroll">
                             {messages.map(m => (
                                 <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[85%] p-8 rounded-3xl ${m.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-[#0f0f0f] border border-white/5 text-gray-300'} shadow-2xl transition-all`}>
-                                        <div className="text-[16px] leading-[1.8] whitespace-pre-wrap">
+                                    <div className={`max-w-[85%] p-6 rounded-2xl transition-all ${m.role === 'user' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-[#0f0f0f] border border-white/5 text-zinc-300'}`}>
+                                        <div className="text-[15px] leading-relaxed whitespace-pre-wrap">
                                             {m.text}
                                         </div>
                                     </div>
                                 </div>
                             ))}
-                            <div ref={chatRef} />
+                            <div ref={chatEndRef} />
                         </div>
 
-                        {/* المدخلات */}
-                        <div className="p-12 bg-gradient-to-t from-black to-transparent">
-                            <div className="max-w-4xl mx-auto relative">
-                                {isComputing && <div className="absolute -top-6 right-6 text-[10px] text-indigo-400 uppercase animate-pulse font-bold">Computing Logic...</div>}
+                        {/* شريط المدخلات */}
+                        <div className="p-10 bg-gradient-to-t from-black to-transparent">
+                            <div className="max-w-4xl mx-auto relative group">
+                                {isComputing && <div className="absolute -top-6 left-0 text-[10px] text-indigo-400 font-bold animate-pulse uppercase tracking-widest">Processing Spectral Signal...</div>}
                                 <input 
-                                    className="w-full bg-[#0f0f0f] border border-white/10 rounded-2xl py-6 pr-14 pl-6 text-sm outline-none focus:border-indigo-500 transition-all"
-                                    placeholder="اسألي عن أسرار المعالج أو اكتبي بروتوكولاً جديداً..."
+                                    className="w-full bg-[#0a0a0a] border border-zinc-800 rounded-2xl py-5 pr-14 pl-6 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                    placeholder="اطلبي محاكاة جديدة أو اسألي العقل المدبر..."
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
-                                    onKeyPress={e => e.key === 'Enter' && executeQuery()}
+                                    onKeyPress={e => e.key === 'Enter' && runSimulation()}
                                 />
-                                <button onClick={executeQuery} className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-indigo-600 rounded-xl hover:bg-indigo-500 transition-all">
+                                <button onClick={runSimulation} className="absolute left-3 top-1/2 -translate-y-1/2 p-3 bg-indigo-600 rounded-xl hover:bg-indigo-400 transition-all shadow-lg">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                                 </button>
                             </div>
@@ -137,13 +155,17 @@
 
                     {/* Auth Modal */}
                     {showAuth && (
-                        <div className="absolute inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm">
-                            <div className="bg-[#0f0f0f] border border-white/10 p-10 rounded-[2.5rem] max-w-md w-full shadow-2xl">
-                                <h2 className="text-xl font-bold text-white mb-6 text-center">مصادقة المهندس السيادي</h2>
+                        <div className="absolute inset-0 z-50 bg-black/98 flex items-center justify-center p-4">
+                            <div className="max-w-md w-full text-center">
+                                <div className="mb-8 inline-block p-4 bg-indigo-600 rounded-3xl shadow-2xl shadow-indigo-900/50">
+                                    <h2 className="text-3xl font-black text-white italic">Fλ</h2>
+                                </div>
+                                <h2 className="text-xl font-bold text-white mb-2">تنشيط القشرة الإدراكية</h2>
+                                <p className="text-sm text-zinc-500 mb-6 italic">الرجاء إدخال مفتاح السيادة للبدء في معالجة البيانات العصبية.</p>
                                 <input 
                                     type="password"
-                                    placeholder="أدخلي مفتاح API الخاص بكِ..."
-                                    className="w-full bg-black border border-white/10 rounded-xl p-4 mb-6 text-sm outline-none focus:border-indigo-500"
+                                    placeholder="Gemini API Key..."
+                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-4 text-center text-white outline-none focus:border-indigo-500"
                                     onBlur={e => {
                                         if(e.target.value) {
                                             localStorage.setItem('f_lambda_key', e.target.value);
@@ -152,7 +174,7 @@
                                         }
                                     }}
                                 />
-                                <p className="text-[10px] text-gray-600 text-center uppercase tracking-widest leading-relaxed">المفتاح يُحفظ محلياً لضمان سيادة البيانات المطلقة.</p>
+                                <p className="text-[10px] text-zinc-700 uppercase tracking-widest">Sovereign Encryption Active</p>
                             </div>
                         </div>
                     )}
