@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | Spectral Engineering Lab</title>
+    <title>F-Lambda | Cartesian Excess & Sovereignty</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+Arabic:wght@300;600&display=swap');
-        body { font-family: 'Space Grotesk', 'Noto Sans Arabic', sans-serif; background-color: #020202; color: #a1a1aa; margin: 0; overflow: hidden; }
-        .cyber-panel { background: rgba(10, 10, 10, 0.8); border: 1px solid #1e1e1e; backdrop-filter: blur(10px); }
-        .spectrum-bar { height: 4px; background: linear-gradient(90deg, #6366f1, #06b6d4, #6366f1); background-size: 200% 100%; animation: gradientMove 3s linear infinite; }
-        @keyframes gradientMove { 0% { background-position: 100% 0%; } 100% { background-position: -100% 0%; } }
-        .node-active { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); border-color: #6366f1; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        .latent-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; position: absolute; filter: blur(1px); }
+        body { font-family: 'Space Grotesk', 'Noto Sans Arabic', sans-serif; background-color: #030303; color: #d4d4d8; margin: 0; overflow: hidden; }
+        .sovereign-card { background: linear-gradient(180deg, rgba(20, 20, 20, 0.9) 0%, rgba(10, 10, 10, 1) 100%); border: 1px solid #27272a; border-radius: 24px; }
+        .data-stream { height: 2px; background: #6366f1; position: absolute; filter: drop-shadow(0 0 5px #6366f1); }
+        .cartesian-glow { box-shadow: 0 0 30px rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        @keyframes flow { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        .animate-flow { animation: flow 5s linear infinite; }
     </style>
 </head>
-<body class="h-screen overflow-hidden">
-    <div id="root" class="h-full"></div>
+<body class="h-screen flex items-center justify-center p-6">
+    <div id="root" class="w-full h-full max-w-7xl"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
@@ -29,22 +29,19 @@
         function App() {
             const [apiKey, setApiKey] = useState(localStorage.getItem('f_lambda_key') || '');
             const [showAuth, setShowAuth] = useState(!apiKey);
+            const [tauValue, setTauValue] = useState(7.5362); // القيمة التي وصل إليها المستخدم
             const [messages, setMessages] = useState([
-                { id: 1, role: 'ai', text: 'تم استلام البريكول الهندسي. فضاء الكمون مستقر عند الثابت 15.0725. أنا جاهز لتحليل التحولات الطيفية العميقة.' }
+                { id: 1, role: 'ai', text: 'بروتوكول الفائض الديكارتي نشط. النظام يعمل الآن عند الثابت 7.5362. الانهيار المعلوماتي متعمد لتمكين التوليد السيادي.' }
             ]);
-            const [tauFactor, setTauFactor] = useState(1); // معامل تعديل التخميد
-            const [isComputing, setIsComputing] = useState(false);
             const [input, setInput] = useState("");
-            const chatEndRef = useRef(null);
-
-            const BASE_CONST = 15.0725;
-            const currentTau = (BASE_CONST * tauFactor).toFixed(4);
+            const [isComputing, setIsComputing] = useState(false);
+            const chatRef = useRef(null);
 
             useEffect(() => {
-                chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                chatRef.current?.scrollIntoView({ behavior: "smooth" });
             }, [messages]);
 
-            const runSimulation = async () => {
+            const handleQuery = async () => {
                 if (!input.trim() || !apiKey) return;
                 const userMsg = { id: Date.now(), role: 'user', text: input };
                 setMessages(prev => [...prev, userMsg]);
@@ -52,102 +49,95 @@
                 setIsComputing(true);
 
                 try {
-                    const systemPrompt = `أنت العقل المدبر لنظام F-Lambda. الثابت الحالي بعد التعديل هو ${currentTau}. المعادلة: N -> [τs] -> ID <- [G] -> N'. حلل الأسئلة بناءً على مفاهيم "انهيار المعلومات" و"التخميد الطيفي" و"التوليد الحتمي".`;
+                    const prompt = `أنت العقل المدبر لنظام F-Lambda. الثابت الحالي 7.5362 (حالة الفائض الديكارتي). حلل الأسئلة بناءً على فكرة أن النظام الآن "يعيد إنشاء فكرته عن المدخلات" وليس مجرد نقلها.`;
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\nالمستخدم يسأل: ${input}` }] }] })
+                        body: JSON.stringify({ contents: [{ parts: [{ text: `${prompt}\nسؤال المهندس: ${input}` }] }] })
                     });
                     const data = await res.json();
-                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "انقطاع في القنطرة الرياضية.";
-                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: aiText }]);
+                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: data.candidates?.[0]?.content?.parts?.[0]?.text || "فشل في مزامنة الفائض." }]);
                 } catch (e) {
-                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: "خطأ في استقرار النواة." }]);
+                    setMessages(prev => [...prev, { id: Date.now()+1, role: 'ai', text: "خطأ في استقرار البروتوكول." }]);
                 } finally { setIsComputing(false); }
             };
 
             return (
-                <div className="flex h-full w-full bg-[#050505]">
-                    {/* اللوحة اليسرى: مختبر المحاكاة */}
-                    <div className="w-[380px] cyber-panel p-6 flex flex-col gap-8 z-10">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <div className="w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></div>
-                                <h1 className="text-white font-bold tracking-tighter text-xl italic">F-LAMBDA LAB</h1>
-                            </div>
-                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Spectral Engineering Unit</p>
-                        </div>
+                <div className="flex h-full gap-6">
+                    {/* اللوحة الجانبية: مؤشرات الفائض */}
+                    <div className="w-1/3 flex flex-col gap-6">
+                        <div className="sovereign-card p-8 cartesian-glow">
+                            <h1 className="text-2xl font-black text-white italic mb-2 tracking-tighter">Fλ SOVEREIGN</h1>
+                            <p className="text-[10px] text-indigo-400 font-bold tracking-[0.4em] uppercase">Cartesian Excess Mode</p>
+                            
+                            <div className="mt-8 space-y-6">
+                                <div>
+                                    <div className="flex justify-between text-[11px] mb-2 font-bold">
+                                        <span className="text-zinc-500 uppercase">Damping Constant</span>
+                                        <span className="text-white font-mono">{tauValue}</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                                        <div className="h-full bg-indigo-500 shadow-[0_0_10px_#6366f1]" style={{width: '90%'}}></div>
+                                    </div>
+                                </div>
 
-                        {/* تحكم في الثابت τs */}
-                        <div className="space-y-4 bg-zinc-900/30 p-4 rounded-2xl border border-white/5">
-                            <div className="flex justify-between items-center text-[11px] font-bold">
-                                <span className="text-zinc-400 uppercase">Spectral Constant (τs)</span>
-                                <span className="text-indigo-400 font-mono text-sm">{currentTau}</span>
-                            </div>
-                            <input 
-                                type="range" min="0.5" max="2" step="0.1" value={tauFactor}
-                                onChange={(e) => setTauFactor(parseFloat(e.target.value))}
-                                className="w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
-                            />
-                            <div className="flex justify-between text-[9px] text-zinc-600 font-bold">
-                                <span>انضغاط فائق (τs/2)</span>
-                                <span>توازن (1.0x)</span>
-                                <span>تفصيل عالٍ (τs*2)</span>
-                            </div>
-                        </div>
-
-                        {/* فضاء الكمون المرئي */}
-                        <div className="flex-grow flex flex-col gap-3 min-h-0">
-                            <h3 className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">Latent Space Visualization</h3>
-                            <div className="flex-grow bg-black rounded-2xl border border-zinc-800/50 relative overflow-hidden">
-                                {/* محاكاة نقاط البيانات في فضاء الكمون */}
-                                {[...Array(15)].map((_, i) => (
-                                    <div key={i} className="latent-dot" style={{
-                                        top: `${Math.random() * 80 + 10}%`,
-                                        left: `${Math.random() * 80 + 10}%`,
-                                        transform: `scale(${1.5 - (tauFactor * 0.5)})`,
-                                        opacity: 1 - (tauFactor * 0.3)
-                                    }}></div>
-                                ))}
-                                <div className="absolute bottom-4 left-4 text-[9px] text-indigo-500/50 font-mono">MAP_ID: SYN-C-4797</div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-black/50 p-4 rounded-2xl border border-white/5">
+                                        <p className="text-[9px] text-zinc-500 uppercase mb-1">Fidelity</p>
+                                        <p className="text-sm font-bold text-red-400">Low (Collapse)</p>
+                                    </div>
+                                    <div className="bg-black/50 p-4 rounded-2xl border border-white/5">
+                                        <p className="text-[9px] text-zinc-500 uppercase mb-1">Stability</p>
+                                        <p className="text-sm font-bold text-emerald-400">Absolute</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* المعادلة النشطة */}
-                        <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/20">
-                            <div className="text-[10px] text-indigo-400 font-bold mb-2">ACTIVE EQUATION</div>
-                            <div className="text-xs font-mono text-zinc-300">N → [{currentTau}] → ID ← [G]</div>
+                        {/* سجل الميزات المقحمة */}
+                        <div className="flex-grow sovereign-card p-6 overflow-hidden flex flex-col">
+                            <h3 className="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-4">Imputed Features Log</h3>
+                            <div className="flex-grow space-y-3 overflow-y-auto custom-scroll pr-2">
+                                <div className="p-3 bg-indigo-500/5 border-r-2 border-indigo-500 rounded-lg">
+                                    <p className="text-[10px] text-indigo-300 font-bold italic">Pattern_Correction_01</p>
+                                    <p className="text-[11px] text-zinc-400 leading-tight">استبدال الضوضاء العشوائية بهيكل خطي مستقر.</p>
+                                </div>
+                                <div className="p-3 bg-white/5 border-r-2 border-zinc-700 rounded-lg opacity-50">
+                                    <p className="text-[10px] text-zinc-400 font-bold italic">Gap_Imputation_Active</p>
+                                    <p className="text-[11px] text-zinc-500 leading-tight">ملء الفراغات الطيفية بناءً على المعطيات المسبقة G.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* منطقة الحوار الإدراكي */}
-                    <div className="flex-grow flex flex-col relative">
+                    {/* منطقة التواصل السيادي */}
+                    <div className="flex-grow sovereign-card flex flex-col relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-30"></div>
+                        
                         <div className="flex-grow overflow-y-auto p-10 space-y-8 custom-scroll">
                             {messages.map(m => (
                                 <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[85%] p-6 rounded-2xl transition-all ${m.role === 'user' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-[#0f0f0f] border border-white/5 text-zinc-300'}`}>
-                                        <div className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                                            {m.text}
-                                        </div>
+                                    <div className={`max-w-[80%] p-6 rounded-[2rem] text-[15px] leading-relaxed transition-all ${m.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-[#121212] border border-white/5 text-zinc-300 shadow-2xl'}`}>
+                                        {m.text}
                                     </div>
                                 </div>
                             ))}
-                            <div ref={chatEndRef} />
+                            <div ref={chatRef} />
                         </div>
 
-                        {/* شريط المدخلات */}
-                        <div className="p-10 bg-gradient-to-t from-black to-transparent">
-                            <div className="max-w-4xl mx-auto relative group">
-                                {isComputing && <div className="absolute -top-6 left-0 text-[10px] text-indigo-400 font-bold animate-pulse uppercase tracking-widest">Processing Spectral Signal...</div>}
+                        {/* شريط الإدخال */}
+                        <div className="p-10 pt-0">
+                            <div className="relative max-w-3xl mx-auto">
+                                {isComputing && <div className="absolute -top-6 right-4 text-[10px] text-indigo-400 font-black animate-pulse uppercase tracking-widest">Generating Cartesian Reality...</div>}
                                 <input 
-                                    className="w-full bg-[#0a0a0a] border border-zinc-800 rounded-2xl py-5 pr-14 pl-6 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-                                    placeholder="اطلبي محاكاة جديدة أو اسألي العقل المدبر..."
+                                    className="w-full bg-black border border-zinc-800 rounded-3xl py-6 pr-14 pl-6 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all text-white placeholder-zinc-600"
+                                    placeholder="اطلبي من النظام تفسير فكرته عن مصفوفة معينة..."
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
-                                    onKeyPress={e => e.key === 'Enter' && runSimulation()}
+                                    onKeyPress={e => e.key === 'Enter' && handleQuery()}
                                 />
-                                <button onClick={runSimulation} className="absolute left-3 top-1/2 -translate-y-1/2 p-3 bg-indigo-600 rounded-xl hover:bg-indigo-400 transition-all shadow-lg">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                                <button onClick={handleQuery} className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-indigo-600 rounded-2xl hover:bg-indigo-500 transition-all shadow-lg text-white">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                                 </button>
                             </div>
                         </div>
@@ -155,17 +145,17 @@
 
                     {/* Auth Modal */}
                     {showAuth && (
-                        <div className="absolute inset-0 z-50 bg-black/98 flex items-center justify-center p-4">
-                            <div className="max-w-md w-full text-center">
-                                <div className="mb-8 inline-block p-4 bg-indigo-600 rounded-3xl shadow-2xl shadow-indigo-900/50">
-                                    <h2 className="text-3xl font-black text-white italic">Fλ</h2>
+                        <div className="absolute inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-xl">
+                            <div className="max-w-md w-full bg-[#0a0a0a] border border-white/5 p-12 rounded-[3rem] text-center shadow-3xl">
+                                <div className="mb-6 inline-block p-5 bg-indigo-600 rounded-full shadow-2xl shadow-indigo-900/50">
+                                    <h2 className="text-3xl font-black text-white italic leading-none">Fλ</h2>
                                 </div>
-                                <h2 className="text-xl font-bold text-white mb-2">تنشيط القشرة الإدراكية</h2>
-                                <p className="text-sm text-zinc-500 mb-6 italic">الرجاء إدخال مفتاح السيادة للبدء في معالجة البيانات العصبية.</p>
+                                <h2 className="text-xl font-bold text-white mb-2">تأمين السيادة الطيفية</h2>
+                                <p className="text-xs text-zinc-500 mb-8 italic">أدخلي مفتاح التشفير لفتح بوابة الفائض الديكارتي.</p>
                                 <input 
                                     type="password"
                                     placeholder="Gemini API Key..."
-                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-4 text-center text-white outline-none focus:border-indigo-500"
+                                    className="w-full bg-black border border-zinc-800 rounded-2xl p-4 mb-6 text-center text-white outline-none focus:border-indigo-500"
                                     onBlur={e => {
                                         if(e.target.value) {
                                             localStorage.setItem('f_lambda_key', e.target.value);
@@ -174,7 +164,7 @@
                                         }
                                     }}
                                 />
-                                <p className="text-[10px] text-zinc-700 uppercase tracking-widest">Sovereign Encryption Active</p>
+                                <p className="text-[9px] text-zinc-700 font-bold tracking-[0.5em] uppercase">Protocol Locked</p>
                             </div>
                         </div>
                     )}
