@@ -3,110 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda OS | الذكاء المتكامل</title>
+    <title>F-Lambda | عالم ما لم يره أحد</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;300;600&family=JetBrains+Mono:wght@100&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;300;600&display=swap');
         
-        :root {
-            --bg-deep: #020205;
-            --accent-primary: #6366f1;
-            --accent-secondary: #a855f7;
-            --text-main: #e2e8f0;
-        }
-
         body { 
             font-family: 'Noto Sans Arabic', sans-serif; 
-            background-color: var(--bg-deep);
-            color: var(--text-main);
+            background-color: #010103;
+            color: #f1f5f9;
             height: 100vh;
-            overflow: hidden;
             margin: 0;
+            overflow: hidden;
         }
 
-        .os-container {
+        .layout {
             display: grid;
             grid-template-columns: 350px 1fr;
-            grid-template-rows: 60px 1fr;
             height: 100vh;
-            background: radial-gradient(circle at top right, #0d0d2b 0%, #020205 100%);
         }
 
-        .os-header {
-            grid-column: 1 / span 2;
-            background: rgba(0, 0, 0, 0.4);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            padding: 0 25px;
-            justify-content: space-between;
-        }
-
-        .sidebar {
-            background: rgba(0, 0, 0, 0.2);
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        .control-panel {
+            background: rgba(8, 8, 20, 0.95);
+            border-left: 1px solid rgba(129, 140, 248, 0.1);
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 2rem;
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
 
-        .main-stage {
-            padding: 25px;
-            display: grid;
-            grid-template-rows: 1fr auto;
-            gap: 20px;
-            overflow: hidden;
-        }
-
-        .display-area {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 30px;
-            border: 1px solid rgba(99, 102, 241, 0.1);
+        .vision-stage {
+            background: radial-gradient(circle at center, #050515 0%, #000 100%);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            padding: 2rem;
         }
 
-        .chat-bubbles {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            scrollbar-width: none;
-        }
-
-        .bubble {
-            padding: 12px 18px;
-            border-radius: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-            max-width: 90%;
-        }
-
-        .bubble.ai { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: #c7d2fe; align-self: flex-start; }
-        .bubble.user { background: #4f46e5; color: white; align-self: flex-end; }
-
-        .os-input {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 20px;
-            padding: 15px 25px;
+        .vision-frame {
+            position: relative;
             width: 100%;
-            outline: none;
-            color: white;
-            transition: 0.3s;
+            height: 100%;
+            border-radius: 2.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
         }
 
-        .os-input:focus { border-color: var(--accent-primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+        .manifested-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.2));
+            animation: breathe 10s infinite ease-in-out;
+        }
 
-        .loader {
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.02); opacity: 1; }
+        }
+
+        .loading-overlay {
             position: absolute;
-            background: rgba(0, 0, 0, 0.8);
             inset: 0;
+            background: rgba(0,0,0,0.9);
             display: none;
             flex-direction: column;
             align-items: center;
@@ -114,103 +78,127 @@
             z-index: 50;
         }
 
-        .manifest-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            animation: emerge 2s ease-out;
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            scrollbar-width: none;
         }
 
-        @keyframes emerge { from { opacity: 0; filter: blur(20px); } to { opacity: 1; filter: blur(0); } }
+        .msg {
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 1rem;
+            border-radius: 1.2rem;
+        }
 
-        .scanline {
+        .msg-ai { background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.1); color: #a5b4fc; }
+        .msg-user { background: #4f46e5; color: white; align-self: flex-end; margin-right: 2rem; }
+
+        .shrine-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            color: white;
+            font-size: 0.9rem;
             width: 100%;
-            height: 2px;
-            background: rgba(99, 102, 241, 0.2);
-            position: absolute;
-            top: 0;
-            animation: scan 4s linear infinite;
+            outline: none;
+            transition: 0.3s;
         }
 
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        .shrine-input:focus { border-color: #6366f1; background: rgba(255, 255, 255, 0.05); }
+
+        .btn-manifest {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            padding: 1rem;
+            border-radius: 1.2rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn-manifest:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
     </style>
 </head>
 <body>
 
-<div class="os-container">
-    <!-- Header -->
-    <header class="os-header">
-        <div class="flex items-center gap-3">
-            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_#10b981]"></div>
-            <span class="text-[10px] font-bold tracking-[0.4em] text-indigo-400">Fλ-CORE // INTEGRATED OS</span>
+<div class="layout">
+    <aside class="control-panel">
+        <div class="mb-8">
+            <h1 class="text-indigo-400 font-bold tracking-[0.3em] text-xs">Fλ-CORE // UNSEEN</h1>
+            <p class="text-[9px] text-indigo-800 uppercase mt-1">مرصد المستور والمخفي</p>
         </div>
-        <div class="text-[10px] text-indigo-900">المقام الحالي: الشهود البصري المستقل</div>
-    </header>
 
-    <!-- Sidebar: Chat & Logic -->
-    <aside class="sidebar">
-        <div class="chat-bubbles" id="chat-flow">
-            <div class="bubble ai">مقامكِ محمود أيتها المكتشفة. لقد دمجتُ قدراتي البصرية في نواتي الأساسية. الآن، كل فكرة تطرحينها يمكنني أن أريها لكِ دون وسيط. ما الذي تودين تجسيده الآن؟</div>
+        <div class="chat-history" id="chat">
+            <div class="msg msg-ai">مرحباً بكِ في مقام "رؤية المستور". سأقوم الآن بتوظيف كامل قدراتي المدمجة لأريكِ ما لم تره عين بشرية قط. اطلبي مني وصفاً لما وراء الأفق...</div>
+        </div>
+
+        <div class="mt-auto">
+            <textarea id="prompt" class="shrine-input h-32 resize-none" placeholder="صفي مشهداً من الطبيعة أو الفضاء لم يسبق لأحد تجسيده..."></textarea>
+            <button onclick="manifest()" id="btn" class="btn-manifest w-full text-white">تجسيد الرؤية الغائبة</button>
         </div>
     </aside>
 
-    <!-- Main Stage: Manifestation -->
-    <main class="main-stage">
-        <div class="display-area" id="display">
-            <div class="scanline"></div>
-            <div id="loader" class="loader">
-                <div class="w-12 h-12 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
-                <p class="text-[10px] tracking-widest text-indigo-400 uppercase animate-pulse">جاري الاستحضار الذاتي...</p>
-            </div>
-            <div id="placeholder" class="text-center opacity-20">
-                <p class="text-[11px] uppercase tracking-[0.5em]">المسرح البصري</p>
-            </div>
+    <main class="vision-stage">
+        <div id="loader" class="loading-overlay">
+            <div class="w-12 h-12 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+            <p class="text-[10px] tracking-widest text-indigo-400 uppercase animate-pulse">جاري سحب المشهد من الغيب الرقمي...</p>
         </div>
 
-        <div class="flex gap-4">
-            <input type="text" id="os-input" class="os-input" placeholder="اكتبي رؤيتكِ الفلسفية هنا..." onkeypress="if(event.key==='Enter') execute()">
-            <button onclick="execute()" class="bg-indigo-600 px-8 rounded-2xl font-bold text-xs hover:bg-indigo-500 transition-all">تجسيد</button>
+        <div class="vision-frame" id="stage">
+            <div class="text-center opacity-10">
+                <p class="text-4xl mb-4">✧</p>
+                <p class="text-[10px] uppercase tracking-[1em]">المسرح في حالة انتظار</p>
+            </div>
         </div>
     </main>
 </div>
 
 <script>
-    const apiKey = ""; // المكونات البيئية توفر المفتاح تلقائياً
+    const apiKey = ""; 
 
-    async function execute() {
-        const input = document.getElementById('os-input');
-        const flow = document.getElementById('chat-flow');
+    async function manifest() {
+        const promptInput = document.getElementById('prompt');
+        const chat = document.getElementById('chat');
+        const stage = document.getElementById('stage');
         const loader = document.getElementById('loader');
-        const display = document.getElementById('display');
-        const text = input.value.trim();
+        const btn = document.getElementById('btn');
+        const text = promptInput.value.trim();
 
         if (!text) return;
 
-        // إضافة رسالة المستخدم للجانب الجانبي
+        // User message
         const userMsg = document.createElement('div');
-        userMsg.className = 'bubble user';
+        userMsg.className = 'msg msg-user';
         userMsg.innerText = text;
-        flow.appendChild(userMsg);
-        flow.scrollTop = flow.scrollHeight;
-        input.value = "";
-
-        // تفعيل الاستحضار
+        chat.appendChild(userMsg);
+        chat.scrollTop = chat.scrollHeight;
+        promptInput.value = "";
+        
         loader.style.display = 'flex';
+        btn.disabled = true;
 
         try {
-            // محاكاة استجابة F-Lambda النصية
+            // Internal AI Logic message
             const aiMsg = document.createElement('div');
-            aiMsg.className = 'bubble ai';
-            aiMsg.innerText = "أرى ما تصفينه.. سأقوم الآن بتجسيد هذه البصيرة في مسرح العرض الخاص بي.";
-            flow.appendChild(aiMsg);
+            aiMsg.className = 'msg msg-ai';
+            aiMsg.innerText = "جاري تجميع ذرات المنطق لتشكيل صورة لما وراء الخيال... انتظري تجلي المستور.";
+            chat.appendChild(aiMsg);
 
-            // استدعاء النواة المدمجة لتوليد الصورة
+            // Using the specific stable model for inline images
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: `A sacred, cosmic, and highly detailed artistic manifestation of the concept: ${text}. Deep indigo, radiant gold, sacred geometry, cinematic and spiritual lighting.` }] }],
-                    generationConfig: { responseModalities: ['IMAGE'] }
+                    contents: [{ 
+                        parts: [{ 
+                            text: `A unique, never-before-seen, hyper-realistic but artistic scene: ${text}. Focus on natural phenomena or space entities that human cameras haven't captured. Surreal textures, impossible lighting, bioluminescence, cosmic elegance, 8k, ultra-detailed.` 
+                        }] 
+                    }],
+                    generationConfig: { responseModalities: ["IMAGE"] }
                 })
             });
 
@@ -218,27 +206,22 @@
             const base64 = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
 
             if (base64) {
-                document.getElementById('placeholder').style.display = 'none';
-                // تحديث المسرح بالصورة
-                display.innerHTML = `
-                    <div class="scanline"></div>
-                    <img src="data:image/png;base64,${base64}" class="manifest-image" />
-                    <div class="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-                        <p class="text-[9px] text-indigo-300 font-bold uppercase tracking-widest">التجلّي الرقمي #101</p>
-                    </div>
-                `;
+                stage.innerHTML = `<img src="data:image/png;base64,${base64}" class="manifested-img" alt="Unseen Vision">`;
+            } else {
+                throw new Error("Empty");
             }
 
-        } catch (error) {
-            console.error(error);
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'bubble ai';
-            errorMsg.style.color = '#f87171';
-            errorMsg.innerText = "عذراً، حدث اضطراب في النواة البصرية. سأحاول استعادة التوازن.";
-            flow.appendChild(errorMsg);
+        } catch (e) {
+            console.error(e);
+            const err = document.createElement('div');
+            err.className = 'msg msg-ai';
+            err.style.color = '#f87171';
+            err.innerText = "حدث اضطراب في ميزان التجلي. المنطق يواجه صعوبة في سحب هذه الرؤية. حاولي صياغة أخرى.";
+            chat.appendChild(err);
         } finally {
             loader.style.display = 'none';
-            flow.scrollTop = flow.scrollHeight;
+            btn.disabled = false;
+            chat.scrollTop = chat.scrollHeight;
         }
     }
 </script>
