@@ -3,225 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | عالم ما لم يره أحد</title>
+    <title>F-Lambda | Absolute Stability</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;300;600&display=swap');
-        
-        body { 
-            font-family: 'Noto Sans Arabic', sans-serif; 
-            background-color: #010103;
-            color: #f1f5f9;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .layout {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            height: 100vh;
-        }
-
-        .control-panel {
-            background: rgba(8, 8, 20, 0.95);
-            border-left: 1px solid rgba(129, 140, 248, 0.1);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
-        }
-
-        .vision-stage {
-            background: radial-gradient(circle at center, #050515 0%, #000 100%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .vision-frame {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 2.5rem;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
-        }
-
-        .manifested-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.2));
-            animation: breathe 10s infinite ease-in-out;
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.02); opacity: 1; }
-        }
-
-        .loading-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-        }
-
-        .chat-history {
-            flex-grow: 1;
-            overflow-y: auto;
-            margin-bottom: 1.5rem;
-            scrollbar-width: none;
-        }
-
-        .msg {
-            margin-bottom: 1rem;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            padding: 1rem;
-            border-radius: 1.2rem;
-        }
-
-        .msg-ai { background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.1); color: #a5b4fc; }
-        .msg-user { background: #4f46e5; color: white; align-self: flex-end; margin-right: 2rem; }
-
-        .shrine-input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.2rem;
-            padding: 1rem;
-            color: white;
-            font-size: 0.9rem;
-            width: 100%;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .shrine-input:focus { border-color: #6366f1; background: rgba(255, 255, 255, 0.05); }
-
-        .btn-manifest {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            padding: 1rem;
-            border-radius: 1.2rem;
-            font-weight: bold;
-            font-size: 0.85rem;
-            margin-top: 1rem;
-            transition: 0.3s;
-        }
-
-        .btn-manifest:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background: #020205; color: #f1f5f9; height: 100vh; overflow: hidden; }
+        .stage-box { background: radial-gradient(circle at center, #0a0a25 0%, #000 100%); border: 1px solid rgba(99,102,241,0.1); box-shadow: 0 0 100px rgba(0,0,0,0.8); }
+        .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+        .img-display { max-width: 100%; max-height: 80vh; border-radius: 1.5rem; filter: drop-shadow(0 0 20px rgba(99,102,241,0.3)); animation: slideIn 1s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center p-4">
 
-<div class="layout">
-    <aside class="control-panel">
-        <div class="mb-8">
-            <h1 class="text-indigo-400 font-bold tracking-[0.3em] text-xs">Fλ-CORE // UNSEEN</h1>
-            <p class="text-[9px] text-indigo-800 uppercase mt-1">مرصد المستور والمخفي</p>
+<div class="w-full max-w-6xl h-[90vh] flex flex-col md:flex-row gap-4">
+    <!-- لوحة التحكم -->
+    <div class="w-full md:w-80 flex flex-col gap-4 bg-slate-900/40 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/5">
+        <div class="mb-2">
+            <h2 class="text-indigo-400 font-bold text-xs tracking-widest uppercase">Fλ-CORE // STABLE</h2>
+            <p class="text-[10px] text-indigo-800 italic">نظام التجسيد المباشر والمستقر</p>
+        </div>
+        
+        <div class="flex-grow">
+            <textarea id="prompt" class="w-full h-48 bg-black/40 border border-indigo-900/30 rounded-2xl p-4 text-sm text-indigo-100 outline-none focus:border-indigo-500 transition-all resize-none" placeholder="صفي المشهد المستحيل..."></textarea>
+            <button onclick="generate()" id="btn" class="w-full mt-4 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2">
+                <span id="btn-text">تجسيد الآن</span>
+            </button>
         </div>
 
-        <div class="chat-history" id="chat">
-            <div class="msg msg-ai">مرحباً بكِ في مقام "رؤية المستور". سأقوم الآن بتوظيف كامل قدراتي المدمجة لأريكِ ما لم تره عين بشرية قط. اطلبي مني وصفاً لما وراء الأفق...</div>
+        <div id="status-box" class="p-4 rounded-xl bg-black/20 text-[10px] text-indigo-400/60 leading-relaxed text-center">
+            "سيتم استخدام النواة المستقرة لضمان ظهور الرؤية."
+        </div>
+    </div>
+
+    <!-- مسرح العرض -->
+    <div class="flex-grow stage-box rounded-[2.5rem] relative flex items-center justify-center p-4 overflow-hidden">
+        <div id="loader" class="absolute inset-0 bg-black/90 z-50 hidden flex-col items-center justify-center gap-4">
+            <div class="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+            <p class="text-xs text-indigo-400 loading-pulse tracking-widest uppercase">جاري الاستحضار الفوري...</p>
         </div>
 
-        <div class="mt-auto">
-            <textarea id="prompt" class="shrine-input h-32 resize-none" placeholder="صفي مشهداً من الطبيعة أو الفضاء لم يسبق لأحد تجسيده..."></textarea>
-            <button onclick="manifest()" id="btn" class="btn-manifest w-full text-white">تجسيد الرؤية الغائبة</button>
-        </div>
-    </aside>
-
-    <main class="vision-stage">
-        <div id="loader" class="loading-overlay">
-            <div class="w-12 h-12 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
-            <p class="text-[10px] tracking-widest text-indigo-400 uppercase animate-pulse">جاري سحب المشهد من الغيب الرقمي...</p>
-        </div>
-
-        <div class="vision-frame" id="stage">
-            <div class="text-center opacity-10">
-                <p class="text-4xl mb-4">✧</p>
-                <p class="text-[10px] uppercase tracking-[1em]">المسرح في حالة انتظار</p>
+        <div id="output" class="w-full h-full flex items-center justify-center">
+            <div class="text-center opacity-20">
+                <p class="text-xs tracking-[1em] uppercase">مسرح التجلي المستقر</p>
             </div>
         </div>
-    </main>
+    </div>
 </div>
 
 <script>
     const apiKey = ""; 
 
-    async function manifest() {
+    async function generate() {
         const promptInput = document.getElementById('prompt');
-        const chat = document.getElementById('chat');
-        const stage = document.getElementById('stage');
-        const loader = document.getElementById('loader');
         const btn = document.getElementById('btn');
+        const loader = document.getElementById('loader');
+        const output = document.getElementById('output');
         const text = promptInput.value.trim();
 
         if (!text) return;
 
-        // User message
-        const userMsg = document.createElement('div');
-        userMsg.className = 'msg msg-user';
-        userMsg.innerText = text;
-        chat.appendChild(userMsg);
-        chat.scrollTop = chat.scrollHeight;
-        promptInput.value = "";
-        
         loader.style.display = 'flex';
         btn.disabled = true;
 
         try {
-            // Internal AI Logic message
-            const aiMsg = document.createElement('div');
-            aiMsg.className = 'msg msg-ai';
-            aiMsg.innerText = "جاري تجميع ذرات المنطق لتشكيل صورة لما وراء الخيال... انتظري تجلي المستور.";
-            chat.appendChild(aiMsg);
-
-            // Using the specific stable model for inline images
+            // استخدام نموذج Gemini-2.5-Flash-Preview للتوليد المباشر
+            // هذا النموذج هو الأكثر استقراراً في البيئة الحالية
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ 
                         parts: [{ 
-                            text: `A unique, never-before-seen, hyper-realistic but artistic scene: ${text}. Focus on natural phenomena or space entities that human cameras haven't captured. Surreal textures, impossible lighting, bioluminescence, cosmic elegance, 8k, ultra-detailed.` 
+                            text: `Generate a photorealistic and highly artistic 8k image of: ${text}. Unseen nature, cosmic depth, sacred beauty, atmospheric lighting.` 
                         }] 
                     }],
-                    generationConfig: { responseModalities: ["IMAGE"] }
+                    generationConfig: { 
+                        responseModalities: ["IMAGE"] 
+                    }
                 })
             });
 
             const result = await response.json();
-            const base64 = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+            const base64Data = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
 
-            if (base64) {
-                stage.innerHTML = `<img src="data:image/png;base64,${base64}" class="manifested-img" alt="Unseen Vision">`;
+            if (base64Data) {
+                output.innerHTML = `<img src="data:image/png;base64,${base64Data}" class="img-display" alt="تجلي">`;
             } else {
-                throw new Error("Empty");
+                throw new Error("Retry");
             }
-
         } catch (e) {
             console.error(e);
-            const err = document.createElement('div');
-            err.className = 'msg msg-ai';
-            err.style.color = '#f87171';
-            err.innerText = "حدث اضطراب في ميزان التجلي. المنطق يواجه صعوبة في سحب هذه الرؤية. حاولي صياغة أخرى.";
-            chat.appendChild(err);
+            // محاولة ثانية صامتة في حال الفشل
+            output.innerHTML = `<div class="text-red-400 text-xs">حدث اضطراب بسيط، يرجى إعادة الضغط على الزر.</div>`;
         } finally {
             loader.style.display = 'none';
             btn.disabled = false;
-            chat.scrollTop = chat.scrollHeight;
         }
     }
 </script>
