@@ -3,120 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda Physics | Integrated API</title>
+    <title>F-Lambda Physics Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700&family=JetBrains+Mono:wght@400&display=swap');
-        body { font-family: 'Noto Sans Arabic', sans-serif; background: #010103; color: #f1f5f9; height: 100vh; overflow: hidden; margin: 0; }
-        .physics-layout { display: grid; grid-template-columns: 400px 1fr; height: 100vh; }
-        .sidebar { background: #050510; border-left: 1px solid rgba(99, 102, 241, 0.15); display: flex; flex-direction: column; }
-        .chat-flow { flex-grow: 1; overflow-y: auto; padding: 1.5rem; scrollbar-width: none; }
-        .bubble { padding: 1rem; border-radius: 1rem; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; max-width: 90%; }
-        .ai-bubble { background: rgba(30, 41, 59, 0.5); border-right: 3px solid #6366f1; color: #cbd5e1; }
-        .user-bubble { background: #4f46e5; margin-right: auto; margin-left: 0; }
-        .input-area { background: #000; border: 1px solid #1e293b; border-radius: 1rem; padding: 1rem; width: 100%; color: white; outline: none; resize: none; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; }
-        .online { background: #10b981; box-shadow: 0 0 10px #10b981; }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background: #020205; color: #f1f5f9; margin: 0; height: 100vh; display: flex; flex-direction: column; }
+        .chat-container { flex-grow: 1; overflow-y: auto; padding: 2rem; }
+        .bubble { max-width: 80%; padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; line-height: 1.6; }
+        .ai-bubble { background: #1e1b4b; border-right: 4px solid #6366f1; align-self: flex-start; }
+        .user-bubble { background: #4f46e5; align-self: flex-end; margin-right: auto; margin-left: 0; }
+        .input-area { background: #0a0a15; border-top: 1px solid #1e293b; padding: 1.5rem; }
     </style>
 </head>
-<body>
+<body class="flex flex-col">
 
-<div class="physics-layout">
-    <!-- الجانب الجانبي: التحكم والمحادثة -->
-    <aside class="sidebar">
-        <div class="p-6 border-b border-white/5">
-            <h1 class="text-indigo-400 font-bold tracking-widest text-xs">Fλ-CORE // API INTERFACE</h1>
-            <div class="flex items-center mt-2">
-                <span class="status-dot online"></span>
-                <span class="text-[9px] text-indigo-700 uppercase">Connected to Render Instance</span>
-            </div>
-        </div>
+    <!-- Header -->
+    <header class="p-5 border-b border-white/5 bg-black/20 flex justify-between items-center">
+        <h1 class="text-indigo-400 font-bold tracking-widest text-sm">Fλ-CORE // INTERFACE</h1>
+        <div class="text-[10px] font-mono opacity-50">API STATUS: <span id="status" class="text-green-500">READY</span></div>
+    </header>
 
-        <div id="chat-flow" class="chat-flow flex flex-col">
-            <div class="bubble ai-bubble">
-                تم تفعيل الربط مع نموذجك الفيزيائي على Render. 
-                <br><br>
-                النظام الآن يعمل بقيد <b>(d²V/dt² = 0)</b>. بانتظار تساؤلكِ حول شحنة الإلكترون واستقرار ذرة الهيدروجين.
-            </div>
-        </div>
-
-        <div class="p-4 bg-black/40">
-            <textarea id="user-input" class="input-area h-24 mb-3" placeholder="اسألي نموذجكِ المستقل..."></textarea>
-            <button onclick="callMyAPI()" id="send-btn" class="w-full bg-indigo-600 py-3 rounded-xl font-bold text-xs hover:bg-indigo-500 transition-all">توجيه الطلب للمعالج</button>
-        </div>
-    </aside>
-
-    <!-- الجانب الرئيسي: عرض البيانات -->
-    <main class="flex flex-col items-center justify-center p-8 bg-[radial-gradient(circle_at_center,#0c0c28_0%,#000_100%)]">
-        <div class="text-center">
-            <div class="font-mono text-5xl text-indigo-500 mb-6 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-                P_stab = (2E_kin * t) / (m * d²)
-            </div>
-            <div class="max-w-xl p-8 bg-white/5 border border-white/5 rounded-[3rem] backdrop-blur-md">
-                <p class="text-sm text-indigo-300 leading-relaxed italic">
-                    "نحن نستخدم نموذجك المستقل الآن لتحليل الروابط الفيزيائية بين الثوابت الكونية وقيد الاستقرار الصفر."
-                </p>
-            </div>
+    <!-- Chat -->
+    <main id="chat-flow" class="chat-container flex flex-col">
+        <div class="bubble ai-bubble">
+            أهلاً بكِ في محراب التحليل. المعالج الفيزيائي المستقل متصل وجاهز.
+            <br><br>
+            <code class="text-indigo-300">P_stab = (2E_kin * t) / (m * d²)</code>
         </div>
     </main>
-</div>
 
-<script>
-    // استبدلي هذا الرابط برابط الـ API الخاص بكِ على Render
-    const MY_API_ENDPOINT = "https://YOUR_RENDER_API_URL/chat"; 
+    <!-- Input -->
+    <footer class="input-area">
+        <div class="max-w-4xl mx-auto flex gap-4">
+            <textarea id="user-input" rows="1" class="flex-grow bg-black/50 border border-white/10 rounded-xl p-3 text-white outline-none resize-none" placeholder="اسألي نموذجك الفيزيائي..."></textarea>
+            <button onclick="sendMessage()" id="send-btn" class="bg-indigo-600 px-8 rounded-xl font-bold text-xs hover:bg-indigo-500 transition-all">إرسال</button>
+        </div>
+    </footer>
 
-    async function callMyAPI() {
-        const input = document.getElementById('user-input');
-        const flow = document.getElementById('chat-flow');
-        const btn = document.getElementById('send-btn');
-        const query = input.value.trim();
+    <script>
+        // هنا تضعين رابط الـ API الخاص بك الذي يظهر في Render
+        const API_URL = "https://your-app-name.onrender.com/chat"; 
 
-        if (!query) return;
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const flow = document.getElementById('chat-flow');
+            const btn = document.getElementById('send-btn');
+            const text = input.value.trim();
 
-        // إضافة رسالة المستخدم
-        const userDiv = document.createElement('div');
-        userDiv.className = 'bubble user-bubble';
-        userDiv.innerText = query;
-        flow.appendChild(userDiv);
-        flow.scrollTop = flow.scrollHeight;
-        input.value = "";
+            if (!text) return;
 
-        btn.disabled = true;
-        btn.innerText = "جاري الاتصال بالمعالج...";
+            // إضافة رسالة المستخدم للواجهة
+            addBubble(text, 'user');
+            input.value = '';
+            btn.disabled = true;
 
-        try {
-            // إرسال الطلب إلى الـ API الخاص بكِ في Render
-            const response = await fetch(MY_API_ENDPOINT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    prompt: query,
-                    physics_context: "Energy Acceleration Constraint (d2V/dt2 = 0)",
-                    constants: { e: "1.602e-19", h: "6.626e-34", k: "1.38e-23" }
-                })
-            });
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
 
-            const data = await response.json();
-            
-            // إضافة رد النموذج الخاص بكِ
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'bubble ai-bubble';
-            aiDiv.innerHTML = `<b>المعالج الفيزيائي:</b><br>${data.response || data.message || "لم يصل رد من النموذج"}`;
-            flow.appendChild(aiDiv);
+                const data = await response.json();
+                // عرض الرد القادم من الـ API الخاص بك في Render
+                addBubble(data.response || data.message || "لا يوجد رد من المعالج", 'ai');
+            } catch (error) {
+                addBubble("خطأ: لم يتمكن الموقع من الوصول إلى المعالج في Render.", 'ai');
+            } finally {
+                btn.disabled = false;
+                flow.scrollTop = flow.scrollHeight;
+            }
+        }
 
-        } catch (error) {
-            console.error(error);
-            const errDiv = document.createElement('div');
-            errDiv.className = 'bubble ai-bubble text-red-400';
-            errDiv.innerText = "فشل الاتصال بـ Render API. تأكدي من أن الخدمة قيد التشغيل.";
-            flow.appendChild(errDiv);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "توجيه الطلب للمعالج";
+        function addBubble(content, role) {
+            const flow = document.getElementById('chat-flow');
+            const div = document.createElement('div');
+            div.className = `bubble ${role === 'user' ? 'user-bubble' : 'ai-bubble'}`;
+            div.innerHTML = content;
+            flow.appendChild(div);
             flow.scrollTop = flow.scrollHeight;
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
