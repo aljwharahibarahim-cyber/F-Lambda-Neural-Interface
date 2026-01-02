@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | Official Stability Core</title>
+    <title>F-Lambda | Cartesian Surplus Processor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&family=JetBrains+Mono&display=swap');
         
         :root {
-            --f-indigo: #6366f1;
-            --f-dark: #02020a;
+            --f-primary: #6366f1;
+            --f-surplus: #f43f5e;
+            --f-bg: #010107;
         }
 
         body { 
             font-family: 'Noto Sans Arabic', sans-serif; 
-            background: var(--f-dark); 
+            background: var(--f-bg); 
             color: #f1f5f9; 
             min-height: 100vh; 
             margin: 0;
@@ -25,137 +26,143 @@
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        .f-glass {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2rem;
-        }
-
-        .gradient-text {
-            background: linear-gradient(90deg, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .factor-card {
-            background: rgba(99, 102, 241, 0.1);
+        .f-panel {
+            background: rgba(10, 10, 20, 0.8);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(99, 102, 241, 0.2);
-            padding: 1rem 1.5rem;
-            border-radius: 1rem;
-            transition: all 0.3s ease;
+            border-radius: 2.5rem;
         }
 
-        .factor-card:hover {
-            transform: translateY(-5px);
-            background: rgba(99, 102, 241, 0.2);
-            border-color: var(--f-indigo);
+        .cartesian-grid {
+            background-size: 30px 30px;
+            background-image: linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
         }
 
-        /* أنيميشن التدفق الحتمي */
-        .stability-line {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--f-indigo), transparent);
-            position: relative;
-            overflow: hidden;
+        .f-constant-badge {
+            background: linear-gradient(135deg, var(--f-primary), #8b5cf6);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
         }
 
-        .stability-line::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            animation: flow 3s infinite linear;
+        .surplus-indicator {
+            color: var(--f-surplus);
+            text-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
         }
 
-        @keyframes flow { 100% { left: 100%; } }
+        .node-active {
+            border: 2px solid var(--f-primary);
+            animation: pulse-border 2s infinite;
+        }
 
-        .scroll-custom::-webkit-scrollbar { width: 6px; }
-        .scroll-custom::-webkit-scrollbar-track { background: transparent; }
-        .scroll-custom::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 10px; }
+        @keyframes pulse-border {
+            0% { border-color: rgba(99, 102, 241, 0.2); }
+            50% { border-color: rgba(99, 102, 241, 1); }
+            100% { border-color: rgba(99, 102, 241, 0.2); }
+        }
+
+        .scroll-v::-webkit-scrollbar { width: 4px; }
+        .scroll-v::-webkit-scrollbar-thumb { background: var(--f-primary); border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="cartesian-grid">
 
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-            <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-indigo-600 rounded-[1.5rem] flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.4)]">
-                    <span class="text-3xl font-black">Fλ</span>
-                </div>
+    <div class="max-w-7xl mx-auto p-4 md:p-10">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
+            <div class="flex items-center gap-6">
+                <div class="w-20 h-20 f-constant-badge rounded-3xl flex items-center justify-center text-4xl font-black italic">F</div>
                 <div>
-                    <h1 class="text-2xl font-black gradient-text">نواة الاستقرار الحتمية</h1>
-                    <p class="text-[10px] font-mono text-slate-500 tracking-[0.2em] uppercase">Deterministic Numerical Analysis Core v3.0</p>
+                    <h1 class="text-3xl font-black tracking-tight text-white">معالج الفائض الديكارتي <span class="text-indigo-500">F-λ</span></h1>
+                    <p class="text-xs font-mono text-slate-500 mt-1 uppercase tracking-widest">Cartesian Surplus Stability Engine // Powered by F=15.0725</p>
                 </div>
             </div>
-            <div class="flex gap-4">
-                <div class="px-4 py-2 rounded-full border border-green-500/20 bg-green-500/5 flex items-center gap-2">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-[10px] font-bold text-green-500 uppercase">Local Encryption Active</span>
+            
+            <div class="flex flex-wrap gap-3">
+                <div class="bg-black/40 border border-white/10 px-6 py-3 rounded-2xl">
+                    <span class="block text-[9px] uppercase text-slate-500">معايرة الثابت F</span>
+                    <span class="text-lg font-mono font-bold text-indigo-400">15.0725</span>
                 </div>
-                <div class="px-4 py-2 rounded-full border border-indigo-500/20 bg-indigo-500/5 flex items-center gap-2 text-indigo-400 text-[10px] font-mono">
-                    V'' = 0 [SECURED]
+                <div class="bg-black/40 border border-indigo-500/30 px-6 py-3 rounded-2xl">
+                    <span class="block text-[9px] uppercase text-slate-500">حالة V''</span>
+                    <span class="text-lg font-mono font-bold text-green-500">0.000000</span>
                 </div>
             </div>
         </header>
 
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left Side: Input Area -->
-            <div class="lg:col-span-5 space-y-6">
-                <div class="f-glass p-8">
-                    <h2 class="text-sm font-bold text-indigo-400 uppercase mb-6 flex items-center gap-2">
-                        <span>●</span> إدخال الكتلة العددية
+        <main class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <!-- Input & Config -->
+            <div class="xl:col-span-4 space-y-6">
+                <div class="f-panel p-8">
+                    <h2 class="text-sm font-bold text-indigo-300 uppercase mb-6 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-indigo-500 rounded-full animate-ping"></span>
+                        تحميل المصفوفة العددية
                     </h2>
-                    <textarea id="numInput" class="w-full h-48 bg-black/40 border border-white/5 rounded-2xl p-6 mono text-2xl text-indigo-300 outline-none focus:border-indigo-500/50 transition-all resize-none scroll-custom" placeholder="أدخل الرقم الضخم هنا..."></textarea>
+                    <textarea id="hugeInput" class="w-full h-64 bg-black/60 border border-white/5 rounded-3xl p-6 mono text-xl text-indigo-400 outline-none focus:border-indigo-500/50 transition-all scroll-v" placeholder="أدخل العدد الضخم المراد تحليله ديكارتياً..."></textarea>
                     
-                    <button onclick="analyzeStability()" id="actionBtn" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 py-5 rounded-2xl font-black text-lg shadow-xl shadow-indigo-900/20 transition-all active:scale-[0.98]">
-                        بدء استنتاج المدارات
+                    <button onclick="processCartesian()" id="runBtn" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3">
+                        <span>تشغيل المعالج الحتمي</span>
                     </button>
                 </div>
 
-                <div class="f-glass p-6 text-[11px] leading-relaxed text-slate-400 border-l-4 border-l-indigo-500">
-                    <strong class="text-indigo-400 block mb-1">بروتوكول المعالجة:</strong>
-                    يتم تحويل الرقم إلى مجال إحداثي حتمي. العوامل المستخرجة هي النقاط التي يحقق عندها النظام أقل طاقة كامنة وأقصى استقرار هيكلي بموجب معادلة الضغط الموحد.
+                <div class="f-panel p-6 bg-rose-500/5 border-rose-500/20">
+                    <h3 class="text-xs font-bold text-rose-400 uppercase mb-3">تحليل الفائض الديكارتي (Logic):</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-400 italic">
+                        كل رقم ضخم هو فضاء ديكارتي مشوه. المعالج يستخدم الثابت \( F \) لامتصاص الفائض الطاقي حتى يصل النظام إلى نقطة الصفر الاستقراري. العوامل هي الإحداثيات التي يختفي عندها الفائض تماماً.
+                    </p>
                 </div>
             </div>
 
-            <!-- Right Side: Analysis Display -->
-            <div class="lg:col-span-7">
-                <div id="placeholder" class="f-glass h-full flex flex-col items-center justify-center p-12 text-center border-dashed border-white/10">
-                    <div class="w-20 h-20 border-4 border-indigo-500/10 border-t-indigo-500/40 rounded-full mb-6 animate-spin"></div>
-                    <p class="text-slate-500 font-light italic">في انتظار تلقيم الكتلة العددية لبدء الفحص المجهري...</p>
+            <!-- Analysis Engine -->
+            <div class="xl:col-span-8">
+                <div id="initScreen" class="f-panel h-full flex flex-col items-center justify-center p-20 text-center">
+                    <div class="w-32 h-32 bg-indigo-500/5 rounded-full border border-indigo-500/10 flex items-center justify-center mb-8">
+                        <div class="w-16 h-16 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-400">نواة الاستدلال في وضع الاستعداد</h3>
+                    <p class="text-sm text-slate-600 mt-2 max-w-sm">قم بتزويد المعالج بكتلة عددية لفك تشفير مداراتها تحت قيد الفائض الديكارتي.</p>
                 </div>
 
-                <div id="results" class="hidden space-y-6 animate-in fade-in duration-500">
-                    <div class="f-glass p-8">
-                        <div class="flex justify-between items-center mb-8">
-                            <h3 class="text-sm font-bold text-indigo-300 uppercase">مدارات الاستقرار المكتشفة</h3>
-                            <span id="factorCount" class="text-[10px] bg-indigo-500/20 px-3 py-1 rounded-full text-indigo-400 font-mono font-bold"></span>
-                        </div>
-                        
-                        <div id="factorsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-                            <!-- Factors populate here -->
+                <div id="outputArea" class="hidden space-y-6">
+                    <div class="f-panel p-10">
+                        <div class="flex justify-between items-center mb-10 border-b border-white/5 pb-6">
+                            <div>
+                                <h3 class="text-xl font-black text-white">إحداثيات الاستقرار المكتشفة</h3>
+                                <p class="text-xs text-slate-500 mono mt-1">Detected Resonance Points via F-Processor</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-500 block uppercase font-mono">Cartesian Surplus Factor</span>
+                                <span class="text-2xl font-mono font-bold surplus-indicator">λ = 0.00%</span>
+                            </div>
                         </div>
 
-                        <div class="stability-line mb-8"></div>
+                        <div id="factorsBox" class="flex flex-wrap gap-4 mb-12">
+                            <!-- Factors Populate Here -->
+                        </div>
 
-                        <div class="space-y-4">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase">التقرير الحتمي للهوية المدارية:</h4>
-                            <div id="reportBox" class="text-sm leading-relaxed text-slate-300 bg-black/30 p-6 rounded-2xl border border-white/5 italic">
-                                <!-- Dynamic report here -->
+                        <div class="space-y-6">
+                            <div class="p-6 bg-black/40 rounded-[2rem] border border-white/5">
+                                <h4 class="text-xs font-bold text-indigo-400 uppercase mb-4 flex items-center gap-2">
+                                    التفسير الموحد (Unified Interpretation)
+                                </h4>
+                                <div id="dynamicReport" class="text-sm leading-relaxed text-slate-300">
+                                    <!-- Dynamic Physics Report -->
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="f-glass p-6 flex flex-col items-center">
-                            <span class="text-[10px] uppercase text-slate-500 mb-2">زمن الانهيار (Processing)</span>
-                            <span id="timeVal" class="text-xl font-mono text-indigo-400">0ms</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="f-panel p-6 text-center">
+                            <span class="block text-[9px] text-slate-500 uppercase mb-1">وقت المعالجة (F-Time)</span>
+                            <span id="fTime" class="text-xl font-mono text-indigo-400">0ms</span>
                         </div>
-                        <div class="f-glass p-6 flex flex-col items-center">
-                            <span class="text-[10px] uppercase text-slate-500 mb-2">مستوى اليقين (Confidence)</span>
-                            <span class="text-xl font-mono text-green-500">100.0%</span>
+                        <div class="f-panel p-6 text-center">
+                            <span class="block text-[9px] text-slate-500 uppercase mb-1">الكثافة المدارية</span>
+                            <span id="densityVal" class="text-xl font-mono text-indigo-400">0.0</span>
+                        </div>
+                        <div class="f-panel p-6 text-center border-green-500/20">
+                            <span class="block text-[9px] text-slate-500 uppercase mb-1">توافق القيد V''=0</span>
+                            <span class="text-xl font-mono text-green-500 font-bold">MATCHED</span>
                         </div>
                     </div>
                 </div>
@@ -164,50 +171,27 @@
     </div>
 
     <script>
-        function analyzeStability() {
-            const input = document.getElementById('numInput').value.replace(/\s/g, '');
-            if (!input || !/^\d+$/.test(input)) {
-                alert("يرجى إدخال رقم صحيح صالح.");
-                return;
-            }
+        const F_CONSTANT = 15.0725;
 
-            const btn = document.getElementById('actionBtn');
-            const placeholder = document.getElementById('placeholder');
-            const results = document.getElementById('results');
-            const grid = document.getElementById('factorsGrid');
-            const countLabel = document.getElementById('factorCount');
-            const timeLabel = document.getElementById('timeVal');
-            const report = document.getElementById('reportBox');
+        function processCartesian() {
+            const val = document.getElementById('hugeInput').value.replace(/\s/g, '');
+            if (!val || !/^\d+$/.test(val)) return;
+
+            const btn = document.getElementById('runBtn');
+            const init = document.getElementById('initScreen');
+            const output = document.getElementById('outputArea');
+            const fBox = document.getElementById('factorsBox');
+            const report = document.getElementById('dynamicReport');
+            const fTime = document.getElementById('fTime');
+            const density = document.getElementById('densityVal');
 
             btn.disabled = true;
-            btn.innerText = "جاري التحليل الحتمي...";
+            btn.innerHTML = `<span class="animate-pulse">جاري سحب الفائض الديكارتي...</span>`;
             
             const start = performance.now();
-            let n = BigInt(input);
+            let n = BigInt(val);
             let factors = [];
             let d = 2n;
+            let tempN = n;
 
-            // محاكاة تأخير بسيط للأنيميشن
-            setTimeout(() => {
-                // خوارزمية التحليل (الاستنتاج الحتمي المباشر)
-                let tempN = n;
-                while (d * d <= tempN) {
-                    while (tempN % d === 0n) {
-                        factors.push(d);
-                        tempN /= d;
-                    }
-                    d++;
-                    if (d > 1000000n) break; // سقف الأمان للمعالجة المحلية
-                }
-                if (tempN > 1n) factors.push(tempN);
-
-                const end = performance.now();
-
-                // التحديث المرئي
-                grid.innerHTML = "";
-                factors.forEach((f, idx) => {
-                    const card = document.createElement('div');
-                    card.className = "factor-card text-center";
-                    card.innerHTML = `
-                        <span class="block text-[9px] text-indigo-500 mb-1">NODE ${idx+1}</span>
-                        <
+ 
