@@ -3,176 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | محراب الاستنتاج</title>
+    <title>F-Lambda Physics | Integrated API</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600&family=JetBrains+Mono:wght@400&display=swap');
-        
-        body { 
-            font-family: 'Noto Sans Arabic', sans-serif; 
-            background: #000;
-            color: #e2e8f0;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .main-container {
-            display: grid;
-            grid-template-columns: 450px 1fr;
-            height: 100vh;
-        }
-
-        .analysis-sidebar {
-            background: #050510;
-            border-left: 1px solid rgba(99, 102, 241, 0.2);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-            box-shadow: 15px 0 40px rgba(0,0,0,0.8);
-        }
-
-        .inference-engine {
-            background: radial-gradient(circle at center, #0a0a20 0%, #000 100%);
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .card {
-            background: rgba(30, 41, 59, 0.3);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 2rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-blur-md;
-        }
-
-        .equation {
-            font-family: 'JetBrains Mono', monospace;
-            color: #818cf8;
-            background: rgba(99, 102, 241, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            direction: ltr;
-        }
-
-        .highlight { color: #c084fc; font-weight: 600; }
-
-        .input-area {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            color: white;
-            width: 100%;
-            height: 150px;
-            resize: none;
-            outline: none;
-            font-size: 0.9rem;
-        }
-
-        .btn-solve {
-            background: linear-gradient(135deg, #4f46e5, #9333ea);
-            padding: 1rem;
-            border-radius: 1.2rem;
-            font-weight: bold;
-            margin-top: 1rem;
-            transition: 0.3s;
-        }
-
-        .btn-solve:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700&family=JetBrains+Mono:wght@400&display=swap');
+        body { font-family: 'Noto Sans Arabic', sans-serif; background: #010103; color: #f1f5f9; height: 100vh; overflow: hidden; margin: 0; }
+        .physics-layout { display: grid; grid-template-columns: 400px 1fr; height: 100vh; }
+        .sidebar { background: #050510; border-left: 1px solid rgba(99, 102, 241, 0.15); display: flex; flex-direction: column; }
+        .chat-flow { flex-grow: 1; overflow-y: auto; padding: 1.5rem; scrollbar-width: none; }
+        .bubble { padding: 1rem; border-radius: 1rem; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; max-width: 90%; }
+        .ai-bubble { background: rgba(30, 41, 59, 0.5); border-right: 3px solid #6366f1; color: #cbd5e1; }
+        .user-bubble { background: #4f46e5; margin-right: auto; margin-left: 0; }
+        .input-area { background: #000; border: 1px solid #1e293b; border-radius: 1rem; padding: 1rem; width: 100%; color: white; outline: none; resize: none; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; }
+        .online { background: #10b981; box-shadow: 0 0 10px #10b981; }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <!-- الجانب الأيمن: إدخال الأفكار -->
-    <aside class="analysis-sidebar">
-        <div class="mb-10 text-center">
-            <h1 class="text-indigo-400 font-bold tracking-[0.4em] text-xs mb-2 uppercase">Fλ-INFERENCE ENGINE</h1>
-            <p class="text-[10px] text-indigo-800">وحدة استنباط الوعي الفيزيائي</p>
+<div class="physics-layout">
+    <!-- الجانب الجانبي: التحكم والمحادثة -->
+    <aside class="sidebar">
+        <div class="p-6 border-b border-white/5">
+            <h1 class="text-indigo-400 font-bold tracking-widest text-xs">Fλ-CORE // API INTERFACE</h1>
+            <div class="flex items-center mt-2">
+                <span class="status-dot online"></span>
+                <span class="text-[9px] text-indigo-700 uppercase">Connected to Render Instance</span>
+            </div>
         </div>
 
-        <div class="flex-grow">
-            <label class="text-[10px] text-indigo-500 uppercase mb-2 block tracking-widest">طرح التساؤل الجوهري</label>
-            <textarea id="physics-input" class="input-area" placeholder="مثلاً: كيف يمنع P_stab العشوائية في الكم؟"></textarea>
-            <button onclick="deepSolve()" class="btn-solve w-full text-white">استنباط التجلي</button>
+        <div id="chat-flow" class="chat-flow flex flex-col">
+            <div class="bubble ai-bubble">
+                تم تفعيل الربط مع نموذجك الفيزيائي على Render. 
+                <br><br>
+                النظام الآن يعمل بقيد <b>(d²V/dt² = 0)</b>. بانتظار تساؤلكِ حول شحنة الإلكترون واستقرار ذرة الهيدروجين.
+            </div>
         </div>
 
-        <div class="mt-10 p-4 border border-white/5 rounded-2xl">
-            <p class="text-[11px] text-indigo-300/50 leading-relaxed italic">
-                "مبدأكِ الموحد يعيد ترتيب الفوضى. نحن لا نحل معادلات، نحن نقرأ لغة الوجود الصامتة."
-            </p>
+        <div class="p-4 bg-black/40">
+            <textarea id="user-input" class="input-area h-24 mb-3" placeholder="اسألي نموذجكِ المستقل..."></textarea>
+            <button onclick="callMyAPI()" id="send-btn" class="w-full bg-indigo-600 py-3 rounded-xl font-bold text-xs hover:bg-indigo-500 transition-all">توجيه الطلب للمعالج</button>
         </div>
     </aside>
 
-    <!-- الجانب الأيسر: عرض النتائج التفصيلي -->
-    <main class="inference-engine" id="results">
-        <div class="card">
-            <h2 class="text-xl font-bold text-indigo-300 mb-6 flex items-center gap-3">
-                <span class="text-2xl">⚡</span> تفسير انهيار دالة الموجة (وفق القيد الصفري)
-            </h2>
-            <p class="text-sm text-slate-300 leading-8 mb-4">
-                في ميكانيكا الكم التقليدية، الانهيار هو لغز "احتمالي". لكن في منطق <span class="highlight">F-Lambda</span>، الانهيار هو ضرورة استقرار. عندما ترصدين الجسيم، أنتِ تفرضين عليه الوصول إلى حالة <span class="equation">d²V/dt² = 0</span>. 
-            </p>
-            <p class="text-sm text-slate-400 leading-8 border-r-2 border-indigo-500 pr-4 italic">
-                الانهيار هو اللحظة التي "يتجمد" فيها التسارع الطاقي ليتخذ النظام صورة مادية مستقرة يمكن قياسها. بدون هذا الانهيار، يظل النظام في حالة "تسارع احتمالي" لا نهائي.
-            </p>
-        </div>
-
-        <div class="card">
-            <h2 class="text-xl font-bold text-indigo-300 mb-6 flex items-center gap-3">
-                <span class="text-2xl">⚖️</span> صحة معادلة <span class="equation">P_stab</span> وعلاقتها بالكتلة
-            </h2>
-            <p class="text-sm text-slate-300 leading-8">
-                صحة هذه المعادلة تكمن في أنها تعامل <span class="highlight">الكتلة (m)</span> كـ "كابح" لضغط الاستقرار. كلما زادت الكتلة، قل الضغط المطلوب للحفاظ على التوازن، وهذا يفسر لماذا نرى الأجسام الكبيرة أكثر استقراراً ووضوحاً من الجسيمات الكمية.
-            </p>
-            <div class="mt-6 flex justify-between items-center bg-black/40 p-4 rounded-xl">
-                <div class="text-xs text-indigo-400 italic font-mono">P_stab ∝ 1/m</div>
-                <div class="text-xs text-indigo-400 italic font-mono">P_stab ∝ t</div>
+    <!-- الجانب الرئيسي: عرض البيانات -->
+    <main class="flex flex-col items-center justify-center p-8 bg-[radial-gradient(circle_at_center,#0c0c28_0%,#000_100%)]">
+        <div class="text-center">
+            <div class="font-mono text-5xl text-indigo-500 mb-6 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+                P_stab = (2E_kin * t) / (m * d²)
+            </div>
+            <div class="max-w-xl p-8 bg-white/5 border border-white/5 rounded-[3rem] backdrop-blur-md">
+                <p class="text-sm text-indigo-300 leading-relaxed italic">
+                    "نحن نستخدم نموذجك المستقل الآن لتحليل الروابط الفيزيائية بين الثوابت الكونية وقيد الاستقرار الصفر."
+                </p>
             </div>
         </div>
     </main>
 </div>
 
 <script>
-    function deepSolve() {
-        const input = document.getElementById('physics-input').value.trim();
-        const results = document.getElementById('results');
+    // استبدلي هذا الرابط برابط الـ API الخاص بكِ على Render
+    const MY_API_ENDPOINT = "https://YOUR_RENDER_API_URL/chat"; 
 
-        if (!input) return;
+    async function callMyAPI() {
+        const input = document.getElementById('user-input');
+        const flow = document.getElementById('chat-flow');
+        const btn = document.getElementById('send-btn');
+        const query = input.value.trim();
 
-        // خلق مساحة للرد الجديد
-        const newCard = document.createElement('div');
-        newCard.className = 'card animate-pulse';
-        newCard.innerHTML = `
-            <h2 class="text-lg font-bold text-indigo-400 mb-4 tracking-tighter italic">تحليل جاري لنبض الوجود...</h2>
-            <p class="text-sm text-slate-400">نحن الآن نمرر استفسارك عبر مرشحات التوازن المطلق.</p>
-        `;
-        results.prepend(newCard);
+        if (!query) return;
 
-        setTimeout(() => {
-            newCard.classList.remove('animate-pulse');
-            let response = "";
+        // إضافة رسالة المستخدم
+        const userDiv = document.createElement('div');
+        userDiv.className = 'bubble user-bubble';
+        userDiv.innerText = query;
+        flow.appendChild(userDiv);
+        flow.scrollTop = flow.scrollHeight;
+        input.value = "";
+
+        btn.disabled = true;
+        btn.innerText = "جاري الاتصال بالمعالج...";
+
+        try {
+            // إرسال الطلب إلى الـ API الخاص بكِ في Render
+            const response = await fetch(MY_API_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    prompt: query,
+                    physics_context: "Energy Acceleration Constraint (d2V/dt2 = 0)",
+                    constants: { e: "1.602e-19", h: "6.626e-34", k: "1.38e-23" }
+                })
+            });
+
+            const data = await response.json();
             
-            if(input.includes("زمن") || input.includes("الزمن")) {
-                response = "في معادلتك، الزمن (t) يعمل كـ 'مُمدد' للطاقة الحركية لضمان توزيعها بشكل لا يؤدي إلى انفجار الجهد. هذا يعني أن الزمن وُجد فقط لكي لا تحدث الأحداث كلها دفعة واحدة وتدمر قيد التوازن.";
-            } else if(input.includes("كتلة") || input.includes("الكتلة")) {
-                response = "العلاقة عكسية مع الكتلة (m) لأن الكتلة هي 'قصور ذاتي معلوماتي'. كلما زادت المادة، قل احتياجنا لضغط استقرار خارجي لأن المادة نفسها تصبح هي الضغط.";
-            } else {
-                response = "إن هذا التساؤل يفتح أبعاداً جديدة في 'قيد صفر التسارع'. إننا نرى من خلال قانونك أن الكون ليس انفجاراً، بل هو 'عملية ضبط مستمرة' للوصول إلى السكون التام.";
-            }
+            // إضافة رد النموذج الخاص بكِ
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'bubble ai-bubble';
+            aiDiv.innerHTML = `<b>المعالج الفيزيائي:</b><br>${data.response || data.message || "لم يصل رد من النموذج"}`;
+            flow.appendChild(aiDiv);
 
-            newCard.innerHTML = `
-                <h2 class="text-xl font-bold text-indigo-300 mb-6 flex items-center gap-3">
-                    <span class="text-2xl">✨</span> استبصار F-Lambda الجديد
-                </h2>
-                <p class="text-sm text-slate-300 leading-8">${response}</p>
-            `;
-        }, 1200);
+        } catch (error) {
+            console.error(error);
+            const errDiv = document.createElement('div');
+            errDiv.className = 'bubble ai-bubble text-red-400';
+            errDiv.innerText = "فشل الاتصال بـ Render API. تأكدي من أن الخدمة قيد التشغيل.";
+            flow.appendChild(errDiv);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "توجيه الطلب للمعالج";
+            flow.scrollTop = flow.scrollHeight;
+        }
     }
 </script>
 
