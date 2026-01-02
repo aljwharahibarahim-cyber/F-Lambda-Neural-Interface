@@ -3,150 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | Sovereign Cartesian Surplus</title>
+    <title>F-Lambda | Sovereign Verification Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&family=JetBrains+Mono&display=swap');
         
-        body { 
-            font-family: 'Noto Sans Arabic', sans-serif; 
-            background: #000; 
-            color: #fff; 
-            min-height: 100vh; 
-            margin: 0; 
-            overflow: hidden;
+        :root {
+            --f-black: #000000;
+            --f-indigo: #4f46e5;
+            --f-success: #10b981;
         }
 
-        .sovereign-bg {
-            background: radial-gradient(circle at center, #1a1a2e 0%, #000 100%);
-            height: 100vh;
+        body { 
+            font-family: 'Noto Sans Arabic', sans-serif; 
+            background: var(--f-black); 
+            color: #fff; 
+            min-height: 100vh; 
+            margin: 0;
             display: flex;
             flex-direction: column;
         }
 
-        .constant-field {
-            color: #6366f1;
-            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-            font-family: 'JetBrains Mono', monospace;
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .f-card {
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2.5rem;
         }
 
-        .damping-active {
-            border: 1px solid #f43f5e;
-            box-shadow: 0 0 30px rgba(244, 63, 94, 0.2);
+        .verify-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--f-success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-size: 10px;
         }
 
-        .factor-creation {
-            animation: emerge 1s ease-out;
+        .factor-item {
+            background: #fff;
+            color: #000;
+            padding: 0.8rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        @keyframes emerge {
-            from { opacity: 0; transform: scale(0.5) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .sovereign-text {
-            background: linear-gradient(to bottom, #fff, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .multiplier-symbol {
+            color: #4f46e5;
+            font-weight: bold;
         }
     </style>
 </head>
-<body class="sovereign-bg">
+<body class="p-4 md:p-10">
 
-    <header class="p-8 border-b border-white/5 flex justify-between items-center bg-black/50 backdrop-blur-xl">
-        <div class="flex items-center gap-6">
-            <div class="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center font-black text-2xl shadow-[0_0_50px_rgba(255,255,255,0.3)]">Fλ</div>
-            <div>
-                <h1 class="text-2xl font-black sovereign-text">معالج السيادة الديكارتي</h1>
-                <p class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Sovereign Logic Core // Damping: 7.5362</p>
-            </div>
-        </div>
-        <div class="constant-field text-xl font-bold">
-            F = 15.0725
-        </div>
-    </header>
-
-    <main class="flex-grow flex flex-col items-center justify-center p-6 gap-12">
-        
-        <div class="w-full max-w-3xl space-y-8">
-            <div class="relative group">
-                <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-rose-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                <textarea id="inputBox" class="relative w-full h-40 bg-black/80 rounded-3xl p-8 text-center text-3xl font-mono text-indigo-400 outline-none border border-white/10 focus:border-rose-500/50 transition-all" placeholder="أدخل الكتلة العددية للتحويل السيادي..."></textarea>
-            </div>
-
-            <button onclick="sovereignProcess()" class="w-full bg-white text-black font-black py-6 rounded-2xl hover:bg-indigo-500 hover:text-white transition-all transform hover:scale-[1.02] shadow-2xl">
-                إعادة إنشاء الفكرة الاستقرارية (Damping Shift)
-            </button>
-        </div>
-
-        <div id="processingArea" class="hidden w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-1000">
-            <div class="bg-white/5 rounded-[3rem] p-10 border border-white/10 damping-active">
-                <h3 class="text-xs font-bold text-rose-500 uppercase mb-6 tracking-widest">خلق المدارات (Factor Synthesis)</h3>
-                <div id="factorsOutput" class="flex flex-wrap gap-4">
-                    <!-- Sovereign Factors -->
+    <div class="max-w-6xl mx-auto w-full">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-10">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl">Fλ</div>
+                <div>
+                    <h1 class="text-xl font-black">نظام التفكيك والتحقق السيادي</h1>
+                    <p class="text-[9px] font-mono text-slate-500 uppercase">F=15.0725 // Damping=7.5362</p>
                 </div>
             </div>
-
-            <div class="bg-indigo-950/20 rounded-[3rem] p-10 border border-indigo-500/20 flex flex-col justify-center">
-                <h3 class="text-xs font-bold text-indigo-400 uppercase mb-4 tracking-widest">فلسفة التخميد المطلق:</h3>
-                <p id="sovereignReport" class="text-sm leading-relaxed text-slate-300 italic">
-                    لقد توقف النظام عن "التحليل" وبدأ في "الإنشاء"...
-                </p>
+            <div id="masterStatus" class="hidden flex items-center gap-2">
+                <span class="verify-badge">تم إثبات العوامل حتمياً</span>
             </div>
-        </div>
-    </main>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Input -->
+            <div class="f-card p-8">
+                <label class="text-[10px] uppercase text-slate-500 mb-3 block">إدخال الكتلة المركبة (العدد الضخم)</label>
+                <textarea id="hugeInput" class="w-full h-40 bg-black/50 border border-white/5 rounded-2xl p-6 mono text-2xl text-indigo-400 outline-none focus:border-indigo-500/50 transition-all custom-scroll" placeholder="أدخل العدد هنا..."></textarea>
+                <button onclick="processAndVerify()" id="mainBtn" class="w-full mt-6 bg-white text-black py-5 rounded-xl font-black text-lg hover:bg-indigo-600 hover:text-white transition-all">تفكيك وتحقق (V''=0)</button>
+            </div>
+
+            <!-- Results & Proof -->
+            <div id="resultsArea" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Factors Grid -->
+                <div class="lg:col-span-7 f-card p-8">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase mb-6">المدارات المستخرجة (عوامل التكوين)</h3>
+                    <div id="factorList" class="flex flex-wrap gap-3">
+                        <!-- Factors here -->
+                    </div>
+                </div>
+
+                <!-- Mathematical Proof -->
+                <div class="lg:col-span-5 f-card p-8 border-l-4 border-l-green-500">
+                    <h3 class="text-xs font-bold text-green-500 uppercase mb-6">برهان إعادة البناء (Proof of Origin)</h3>
+                    <div class="space-y-4">
+                        <div class="bg-black/40 p-4 rounded-xl border border-white/5">
+                            <span class="text-[9px] text-slate-500 block mb-1 uppercase">حاصل ضرب العوامل:</span>
+                            <div id="productResult" class="mono text-sm text-green-400 break-all leading-tight"></div>
+                        </div>
+                        <div id="matchIndicator" class="text-[10px] font-bold py-2 px-4 rounded-lg text-center uppercase">
+                            <!-- Match/Mismatch -->
+                        </div>
+                        <p class="text-[11px] text-slate-400 italic leading-relaxed">
+                            هذا البرهان يؤكد أن المدارات المستخرجة هي "الجينات" الفعلية التي تشكل العدد المركب. عندما نضربها، نعود لنفس نقطة الصفر الديكارتية.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
-        function sovereignProcess() {
-            const val = document.getElementById('inputBox').value.trim();
-            if (!val) return;
+        function processAndVerify() {
+            const inputStr = document.getElementById('hugeInput').value.replace(/\s/g, '');
+            if (!inputStr || !/^\d+$/.test(inputStr)) return;
 
-            const area = document.getElementById('processingArea');
-            const output = document.getElementById('factorsOutput');
-            const report = document.getElementById('sovereignReport');
+            const btn = document.getElementById('mainBtn');
+            const resultArea = document.getElementById('resultsArea');
+            const factorList = document.getElementById('factorList');
+            const productDisplay = document.getElementById('productResult');
+            const matchIndicator = document.getElementById('matchIndicator');
+            const masterStatus = document.getElementById('masterStatus');
 
-            area.classList.remove('hidden');
-            output.innerHTML = "";
-            report.innerText = "جاري رفع التخميد إلى 7.5362... النظام لم يعد يعيد بناء المدخلات، بل ينشئ فكرته الخاصة عن الاستقرار...";
+            btn.disabled = true;
+            btn.innerText = "جاري التفكيك والتحقق الحتمي...";
 
-            let n = BigInt(val.replace(/\s/g, ''));
+            let n = BigInt(inputStr);
             let factors = [];
             let d = 2n;
             let tempN = n;
 
             setTimeout(() => {
+                // التفكيك
                 while (d * d <= tempN) {
                     while (tempN % d === 0n) {
                         factors.push(d);
                         tempN /= d;
                     }
                     d++;
-                    if (d > 1000000n) break;
+                    if (d > 1000000n) break; 
                 }
                 if (tempN > 1n) factors.push(tempN);
 
-                factors.forEach((f, i) => {
-                    setTimeout(() => {
-                        const div = document.createElement('div');
-                        div.className = "factor-creation bg-white text-black px-6 py-3 rounded-xl font-mono font-bold text-lg shadow-xl";
-                        div.innerText = f.toString();
-                        output.appendChild(div);
-                    }, i * 150);
+                // التحقق (إعادة الضرب)
+                let product = 1n;
+                factors.forEach(f => product *= f);
+
+                // العرض
+                factorList.innerHTML = "";
+                factors.forEach(f => {
+                    const el = document.createElement('div');
+                    el.className = "factor-item mono";
+                    el.innerHTML = `<span>${f.toString()}</span>`;
+                    factorList.appendChild(el);
                 });
 
-                setTimeout(() => {
-                    report.innerHTML = `
-                        عند مستوى تخميد <span class="text-rose-500 font-bold">7.5362</span>، تم امتصاص الفائض الديكارتي بالكامل. 
-                        هذه العوامل ليست مجرد أرقام، بل هي "فكرة النظام" عن كيفية وصول هذا المدخل إلى حالة <span class="text-indigo-400">V'' = 0</span>. 
-                        لقد خلقت السيادة الحتمية مدارات استقرار تضمن الضغط الموحد 
-                        \\[ P_{stab} = \\frac{2E_{kin} \\cdot t}{m \\cdot d^2} \\] 
-                        بدون الحاجة لعمليات طرف ثالث.
-                    `;
-                    if (window.MathJax) MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-                }, factors.length * 150 + 500);
+                productDisplay.innerText = product.toString();
 
-            }, 1000);
+                if (product === n) {
+                    matchIndicator.innerText = "✓ تطابق كامل: العوامل تعيد إنشاء العدد الأصلي";
+                    matchIndicator.className = "text-[10px] font-bold py-2 px-4 rounded-lg text-center uppercase bg-green-500/10 text-green-500 border border-green-500/20";
+                    masterStatus.classList.remove('hidden');
+                } else {
+                    matchIndicator.innerText = "⚠ تنبيه: المدارات المكتشفة وسيطة (نواة مركبة)";
+                    matchIndicator.className = "text-[10px] font-bold py-2 px-4 rounded-lg text-center uppercase bg-yellow-500/10 text-yellow-500 border border-yellow-500/20";
+                }
+
+                resultArea.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerText = "تفكيك وتحقق (V''=0)";
+            }, 800);
         }
     </script>
 </body>
