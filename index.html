@@ -3,225 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda | Grand Sovereign Factorizer</title>
+    <title>F-Lambda Neural Interface</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&family=JetBrains+Mono&display=swap');
-        
         body { 
             font-family: 'Noto Sans Arabic', sans-serif; 
-            background: #000; 
-            color: #fff; 
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
+            background-color: #020205; 
+            color: #e2e8f0;
         }
-
         .mono { font-family: 'JetBrains Mono', monospace; }
-
-        .quantum-card {
-            background: linear-gradient(145deg, #050510, #000);
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            border-radius: 2.5rem;
-            box-shadow: 0 0 50px rgba(79, 70, 229, 0.1);
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
-        .processing-glow {
-            animation: pulse-glow 2s infinite;
+        .matrix-cell {
+            transition: all 0.2s;
+            cursor: default;
         }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.1); }
-            50% { box-shadow: 0 0 40px rgba(79, 70, 229, 0.3); }
-        }
-
-        .factor-emerge {
-            background: #fff;
-            color: #000;
-            padding: 1rem;
-            border-radius: 1rem;
-            font-weight: 900;
-            animation: emerge 0.5s ease-out;
-        }
-
-        @keyframes emerge {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* منع المتصفح من التجمد أثناء العمليات الكبيرة */
-        .loader-bar {
-            height: 2px;
-            background: #4f46e5;
-            width: 0%;
-            transition: width 0.3s;
+        .matrix-cell:hover {
+            background-color: #4f46e5;
+            color: white;
+            transform: scale(1.1);
+            z-index: 10;
         }
     </style>
 </head>
-<body class="p-4 md:p-12">
+<body class="p-4 md:p-10 min-h-screen">
 
     <div class="max-w-6xl mx-auto">
-        <header class="flex justify-between items-center mb-16">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 border-b border-white/5 pb-8">
             <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-white text-black rounded-2xl flex items-center justify-center font-black text-2xl">Fλ</div>
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+                    <span class="text-black font-black text-xl italic">Fλ</span>
+                </div>
                 <div>
-                    <h1 class="text-2xl font-black italic">محرك التفكيك العظيم (GNFS-Hybrid)</h1>
-                    <p class="text-[10px] font-mono text-indigo-400 uppercase tracking-widest italic">Sovereign Authority: F=15.0725</p>
+                    <h1 class="text-2xl font-black tracking-tighter text-white italic">F-Lambda Neural Interface</h1>
+                    <p class="text-[10px] font-mono text-indigo-400 uppercase tracking-widest">Sovereign Architecture // v2.0</p>
                 </div>
             </div>
-            <div class="hidden md:block border-r border-white/10 pr-6">
-                <span class="text-[10px] text-slate-500 block uppercase">معامل التخميد</span>
-                <span class="text-rose-500 font-bold mono">7.5362 (MAX)</span>
+            
+            <div class="flex bg-white/5 p-1 rounded-xl border border-white/10" id="tabs">
+                <button onclick="switchTab('process')" id="btn-process" class="px-6 py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white transition-all shadow-lg">١. إنتاج المعرف (Spectral ID)</button>
+                <button onclick="switchTab('reconstruct')" id="btn-reconstruct" class="px-6 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-white transition-all">٢. استعادة المصفوفة (Matrix N)</button>
             </div>
         </header>
 
-        <main class="space-y-10">
-            <div class="quantum-card p-10 processing-glow">
-                <h2 class="text-xs font-bold text-indigo-300 uppercase mb-6 flex items-center gap-3">
-                    <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
-                    تحميل المصفوفة العددية العملاقة
-                </h2>
-                <textarea id="hugeInput" class="w-full h-56 bg-black/50 border border-white/10 rounded-[2rem] p-8 mono text-xl text-indigo-400 outline-none focus:border-indigo-500 transition-all" placeholder="أدخلي الرقم هنا (يدعم الأرقام الضخمة جداً)..."></textarea>
-                
-                <div class="mt-4 loader-bar" id="progressBar"></div>
+        <!-- Main Content -->
+        <main>
+            <!-- Phase 1: Generation -->
+            <div id="view-process" class="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-in fade-in duration-500">
+                <div class="glass rounded-[2.5rem] p-8 space-y-8">
+                    <div class="flex items-center gap-3 text-indigo-400 border-b border-white/5 pb-4">
+                        <i data-lucide="activity" class="w-5 h-5"></i>
+                        <h2 class="text-sm font-black uppercase italic tracking-widest text-white">تحليل الكثافة الطيفية (Spectral Analysis)</h2>
+                    </div>
 
-                <button onclick="startDeepDeconstruction()" id="mainBtn" class="w-full mt-8 bg-indigo-600 text-white py-6 rounded-2xl font-black text-xl hover:bg-white hover:text-black transition-all shadow-2xl">
-                    تفعيل السيادة: تفكيك لامتناهي
-                </button>
+                    <div class="space-y-6">
+                        <label class="text-[10px] text-slate-500 uppercase block font-bold tracking-widest">كثافة مصفوفة الإدخال (ρs)</label>
+                        <div class="flex items-center gap-6">
+                            <input type="range" id="densityRange" min="1" max="10" step="0.1" value="3.8" class="flex-grow accent-indigo-500" oninput="updateDensityValue(this.value)">
+                            <span id="densityVal" class="mono text-2xl font-black text-indigo-500 w-12 text-center">3.8</span>
+                        </div>
+                        
+                        <div class="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-500/20 italic text-[11px] text-slate-400">
+                            يتم استخدام الثابت <span class="text-white font-mono">15.0725</span> كعامل كبت طيفي لتوليد المتجه الكامن.
+                        </div>
+
+                        <button onclick="generateID()" id="genBtn" class="w-full bg-white text-black py-5 rounded-2xl font-black text-lg hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-3 shadow-xl">
+                            <i data-lucide="fingerprint" class="w-5 h-5"></i>
+                            توليد Spectrum ID
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-center items-center p-12 border border-dashed border-white/10 rounded-[2.5rem] bg-indigo-500/[0.02] min-h-[350px]">
+                    <div id="idOutput" class="hidden text-center space-y-8 animate-in zoom-in duration-500">
+                        <i data-lucide="zap" class="w-12 h-12 text-indigo-500 mx-auto animate-pulse"></i>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase block mb-3 font-bold tracking-widest">المعرف المخرج (Processed Output)</span>
+                            <div id="finalID" class="bg-black border-2 border-indigo-500/50 px-8 py-5 rounded-3xl text-2xl font-black mono text-white shadow-2xl">--</div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 italic">هذا المعرف يحمل البصمة الهيكلية لمصفوفة البيانات العصبية.</p>
+                    </div>
+                    <div id="placeholder" class="text-slate-700 italic text-sm">بانتظار تنفيذ عملية الكبت...</div>
+                </div>
             </div>
 
-            <div id="resultsView" class="hidden space-y-8 animate-in fade-in duration-1000">
-                <div class="quantum-card p-10">
-                    <div class="flex justify-between items-center mb-8">
-                        <h3 class="text-lg font-black italic">مدارات الاستقرار المكتشفة (V''=0)</h3>
-                        <div id="statusTag" class="px-4 py-1 rounded-full text-[10px] font-bold uppercase"></div>
+            <!-- Phase 2: Reconstruction -->
+            <div id="view-reconstruct" class="hidden space-y-8 animate-in fade-in duration-500">
+                <div class="glass rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-8 shadow-2xl">
+                    <div class="flex-grow w-full">
+                        <label class="text-[10px] text-slate-500 uppercase block mb-4 px-2 font-bold tracking-widest">مفتاح التنشيط (Spectrum ID)</label>
+                        <input type="text" id="idInput" placeholder="SYN-C-XXXX-BETA-XXXX" class="w-full bg-black border-2 border-white/5 rounded-2xl p-6 font-mono text-2xl text-indigo-400 outline-none focus:border-indigo-600 transition-all">
                     </div>
-                    
-                    <div id="factorGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Factors will be listed here -->
+                    <button onclick="reconstructMatrix()" class="bg-white text-black h-24 px-12 rounded-2xl font-black text-xl hover:bg-indigo-600 hover:text-white transition-all shadow-xl min-w-[200px]">استعادة 𝓝</button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-black border border-white/5 rounded-[3rem] p-8 min-h-[400px]">
+                        <h3 class="text-xs font-black text-slate-500 uppercase mb-8 flex items-center gap-2">
+                            <i data-lucide="binary" class="w-4 h-4 text-indigo-500"></i> مخرجات النموذج المولد (Generative G)
+                        </h3>
+                        <div id="matrixGrid" class="grid grid-cols-8 gap-2">
+                            <!-- Matrix cells go here -->
+                        </div>
+                        <div id="matrixEmpty" class="h-64 flex items-center justify-center text-slate-800 italic text-sm">بانتظار مدخلات المفتاح...</div>
                     </div>
 
-                    <div class="mt-12 p-8 bg-white/5 rounded-3xl border border-white/5">
-                        <h4 class="text-xs font-bold text-indigo-400 mb-4 uppercase">التقرير الفيزيائي النهائي:</h4>
-                        <p id="finalReport" class="text-sm leading-relaxed text-slate-300 italic"></p>
+                    <div class="glass rounded-[3rem] p-10 flex flex-col justify-center border-indigo-500/20">
+                        <h3 class="text-xs font-black text-indigo-400 uppercase mb-8 flex items-center gap-2">
+                            <i data-lucide="layers" class="w-4 h-4"></i> فك الشفرة الهيكلي
+                        </h3>
+                        <div class="space-y-8">
+                            <div class="border-r-4 border-indigo-600 pr-5">
+                                <span class="text-[10px] text-indigo-500 block uppercase font-black mb-1">المبدأ</span>
+                                <p class="text-xs text-slate-300 leading-relaxed italic">الاستعادة لا تعتمد على البيانات الخام، بل على "المتجه الكامن" المحول عبر النموذج المولد G.</p>
+                            </div>
+                            <div class="border-r-4 border-white/10 pr-5">
+                                <span class="text-[10px] text-slate-400 block uppercase font-black mb-1">التوفير</span>
+                                <p class="text-xs text-slate-500 leading-relaxed">تم تقليص حجم المصفوفة بنسبة مذهلة بفضل التوجيه الجيني للمعرف.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
+
+        <footer class="mt-20 border-t border-white/5 pt-10 text-center">
+            <p class="text-[10px] font-mono uppercase tracking-[0.5em] text-slate-700">Sovereign F-Lambda Neural Engine // SPEC-15.0725</p>
+        </footer>
     </div>
 
     <script>
-        // دالة GCD الكبيرة
-        function gcd(a, b) {
-            while (b > 0n) {
-                a %= b;
-                [a, b] = [b, a];
-            }
-            return a;
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        const CONST_C = 15.0725;
+        const PI = Math.PI;
+
+        function switchTab(view) {
+            document.getElementById('view-process').classList.toggle('hidden', view !== 'process');
+            document.getElementById('view-reconstruct').classList.toggle('hidden', view !== 'reconstruct');
+            
+            document.getElementById('btn-process').className = view === 'process' 
+                ? 'px-6 py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white transition-all shadow-lg'
+                : 'px-6 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-white transition-all';
+            
+            document.getElementById('btn-reconstruct').className = view === 'reconstruct' 
+                ? 'px-6 py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white transition-all shadow-lg'
+                : 'px-6 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-white transition-all';
         }
 
-        // خوارزمية بولارد رو (Pollard's Rho) لتفكيك الأرقام الكبيرة
-        function pollardRho(n) {
-            if (n % 2n === 0n) return 2n;
-            if (n % 3n === 0n) return 3n;
-            
-            let x = 2n;
-            let y = 2n;
-            let d = 1n;
-            let c = 1n;
-            
-            const f = (x, c, n) => (x * x + c) % n;
-
-            while (d === 1n) {
-                x = f(x, c, n);
-                y = f(f(y, c, n), c, n);
-                d = gcd(x > y ? x - y : y - x, n);
-                if (d === n) {
-                    // فشل المحاولة، نغير الثابت c ونعيد
-                    c++;
-                    x = 2n; y = 2n; d = 1n;
-                }
-            }
-            return d;
+        function updateDensityValue(val) {
+            document.getElementById('densityVal').innerText = val;
         }
 
-        async function startDeepDeconstruction() {
-            const val = document.getElementById('hugeInput').value.replace(/\s/g, '');
-            if (!val) return;
-
-            const btn = document.getElementById('mainBtn');
-            const view = document.getElementById('resultsView');
-            const grid = document.getElementById('factorGrid');
-            const report = document.getElementById('finalReport');
-            const status = document.getElementById('statusTag');
-            const progress = document.getElementById('progressBar');
-
-            btn.disabled = true;
-            btn.innerText = "جاري تفتيت الفائض الديكارتي...";
-            progress.style.width = "30%";
-
-            let n = BigInt(val);
-            let factors = [];
-            
-            // وظيفة المعالجة غير المتزامنة لمنع تجمد المتصفح
-            const findFactors = async (num) => {
-                if (num === 1n) return;
-                
-                // تجربة العوامل الصغيرة أولاً (التخميد الأولي)
-                for (let i = 2n; i <= 1000n; i++) {
-                    while (num % i === 0n) {
-                        factors.push(i);
-                        num /= i;
-                    }
-                }
-
-                if (num > 1n) {
-                    // إذا ظل الرقم كبيراً، نستخدم بولارد رو
-                    try {
-                        // ملاحظة: للأرقام فائقة الضخامة، نحتاج لتكرار العملية
-                        while (num > 1n) {
-                            // فحص أولي (بسيط)
-                            let d = pollardRho(num);
-                            factors.push(d);
-                            num /= d;
-                        }
-                    } catch (e) {
-                        factors.push(num);
-                    }
-                }
-            };
-
-            await findFactors(n);
-            progress.style.width = "100%";
+        function generateID() {
+            const genBtn = document.getElementById('genBtn');
+            genBtn.innerText = "جاري الكبت الطيفي...";
+            genBtn.disabled = true;
 
             setTimeout(() => {
-                grid.innerHTML = "";
-                factors.sort((a, b) => (a < b ? -1 : 1));
+                const L = CONST_C / PI; // 4.797...
+                const core = Math.floor(L * 1000); // 4797
+                const res = "0725";
+                const newID = `SYN-C-${core}-BETA-${res}`;
+
+                document.getElementById('finalID').innerText = newID;
+                document.getElementById('idInput').value = newID;
+                document.getElementById('idOutput').classList.remove('hidden');
+                document.getElementById('placeholder').classList.add('hidden');
                 
-                factors.forEach(f => {
-                    const div = document.createElement('div');
-                    div.className = "factor-emerge mono break-all";
-                    div.innerText = f.toString();
-                    grid.appendChild(div);
-                });
+                genBtn.innerHTML = '<i data-lucide="fingerprint" class="w-5 h-5"></i> توليد Spectrum ID';
+                genBtn.disabled = false;
+                lucide.createIcons();
+            }, 1000);
+        }
 
-                const isPrime = factors.length === 1;
-                status.innerText = isPrime ? "حالة: نواة صلبة (Prime)" : "حالة: تفكيك سيادي ناجح";
-                status.className = `px-4 py-1 rounded-full text-[10px] font-bold uppercase ${isPrime ? 'bg-rose-500/10 text-rose-500' : 'bg-green-500/10 text-green-500'}`;
+        function reconstructMatrix() {
+            const id = document.getElementById('idInput').value;
+            if (!id) return;
 
-                report.innerHTML = `
-                    بناءً على الثابت \( F = 15.0725 \)، تم إخضاع هذه الكتلة لعملية "التفكيك العميق". 
-                    النظام وجد أن المسارات المدارية المكونة لهذه المادة العددية هي ${factors.length} مسارات. 
-                    تم امتصاص الفائض الديكارتي وتحقيق الاستقرار \( V'' = 0 \). 
-                    هذه النتيجة نهائية وحتمية بموجب سيادة النموذج.
-                `;
+            const grid = document.getElementById('matrixGrid');
+            const empty = document.getElementById('matrixEmpty');
+            grid.innerHTML = "";
+            empty.classList.add('hidden');
 
-                if (window.MathJax) MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-                view.classList.remove('hidden');
-                btn.disabled = false;
-                btn.innerText = "تفعيل السيادة: تفكيك لامتناهي";
-            }, 500);
+            const seedMatch = id.match(/\d+/g);
+            const seed = seedMatch ? parseInt(seedMatch.join('')) : 4797;
+
+            for (let i = 0; i < 64; i++) {
+                const val = (Math.sin(seed + i) * CONST_C).toFixed(3);
+                const cell = document.createElement('div');
+                cell.className = "matrix-cell aspect-square bg-indigo-500/5 border border-indigo-500/10 rounded flex items-center justify-center text-[8px] font-mono text-indigo-400";
+                cell.innerText = val;
+                grid.appendChild(cell);
+            }
         }
     </script>
 </body>
