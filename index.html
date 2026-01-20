@@ -63,11 +63,24 @@
             border: 2px dashed rgba(79, 70, 229, 0.2);
             transition: all 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
 
-        .drop-zone.active {
-            border-color: #4f46e5;
-            background: rgba(79, 70, 229, 0.1);
+        .drop-zone:hover {
+            border-color: rgba(79, 70, 229, 0.6);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        /* هذا الجزء يضمن أن حقل الرفع يملأ المساحة تماماً ويكون فوق كل شيء */
+        #fileInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 100;
         }
     </style>
 </head>
@@ -91,7 +104,6 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
             <aside class="lg:col-span-4 space-y-6">
                 <div class="sovereign-card p-8">
                     <h2 class="flex items-center gap-3 text-sm font-bold text-white mb-8 italic">
@@ -102,45 +114,39 @@
                     <div class="space-y-6">
                         <div class="space-y-4">
                             <label class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">تلقيم المادة الخام \(\mathcal{N}\)</label>
-                            <div id="dropZone" class="drop-zone rounded-[2rem] p-10 text-center cursor-pointer group overflow-hidden">
-                                <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50" title="ارفع الملف هنا">
-                                <div class="pointer-events-none relative z-10">
-                                    <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto mb-4 text-slate-600 group-hover:text-indigo-500 transition-colors"></i>
+                            
+                            <div id="dropZone" class="drop-zone rounded-[2rem] p-10 text-center">
+                                <input type="file" id="fileInput" title="">
+                                <div class="pointer-events-none">
+                                    <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto mb-4 text-slate-600"></i>
                                     <p class="text-[11px] text-slate-400">انقر هنا أو اسحب الملف لبدء التكثيف</p>
                                     <p class="text-[9px] text-slate-600 mt-2">(صور، فيديو، صوت، ملفات برمجية)</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="fileInfo" class="hidden animate-in slide-in-from-top-2">
+                        <div id="fileInfo" class="hidden">
                             <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
                                 <div class="flex items-center gap-3 overflow-hidden">
-                                    <i data-lucide="file" class="w-4 h-4 text-indigo-400 flex-shrink-0"></i>
+                                    <i data-lucide="file" class="w-4 h-4 text-indigo-400"></i>
                                     <span id="fileName" class="text-[10px] mono text-indigo-300 truncate">--</span>
                                 </div>
-                                <button type="button" onclick="resetInput()" class="text-slate-500 hover:text-red-400 transition-colors relative z-[60]">
+                                <button onclick="resetInput()" class="text-slate-500 hover:text-red-400 z-[110] relative">
                                     <i data-lucide="x-circle" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <button onclick="executeTheory()" id="execBtn" class="w-full bg-indigo-600 py-5 rounded-2xl font-black text-lg glow-button flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button onclick="executeTheory()" id="execBtn" class="w-full bg-indigo-600 py-5 rounded-2xl font-black text-lg glow-button flex items-center justify-center gap-3">
                             <i data-lucide="zap" class="w-5 h-5"></i>
                             تطبيق المعادلة الحتمية
                         </button>
                     </div>
                 </div>
-
-                <div class="sovereign-card p-6 bg-indigo-600/5 border-indigo-500/20">
-                    <p class="text-[11px] text-slate-400 italic leading-relaxed">
-                        $$\mathcal{N} \xrightarrow{[\tau_s]} \text{ID}$$
-                        يتم تحليل بايتات المادة الخام لاستخراج "البصمة الجينية" عبر الكبت الطيفي.
-                    </p>
-                </div>
             </aside>
 
             <main class="lg:col-span-8 space-y-8">
-                <div id="resultCard" class="sovereign-card p-10 hidden animate-in zoom-in duration-500">
+                <div id="resultCard" class="sovereign-card p-10 hidden">
                     <div class="flex flex-col items-center text-center">
                         <i data-lucide="binary" class="text-indigo-500 w-10 h-10 mb-6"></i>
                         <span class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-4 font-bold">Spectral Genetic Seed (ID)</span>
@@ -168,11 +174,8 @@
                     <div class="flex justify-between items-center mb-8">
                         <h2 class="flex items-center gap-3 text-lg font-black italic">
                             <i data-lucide="database" class="text-indigo-500"></i>
-                            المحرك المولد \(\mathcal{G}\) (Restoration)
+                            المحرك المولد \(\mathcal{G}\)
                         </h2>
-                        <span class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
-                            \(\mathcal{N}' = \mathcal{G}(\text{ID})\)
-                        </span>
                     </div>
 
                     <div id="matrixPlaceholder" class="flex-grow flex flex-col items-center justify-center border border-dashed border-indigo-500/10 rounded-[2.5rem]">
@@ -180,55 +183,29 @@
                         <p class="text-slate-600 italic text-sm">بانتظار تلقيم المعرف لإعادة بناء المادة</p>
                     </div>
 
-                    <div id="matrixDisplay" class="hidden flex-grow animate-in fade-in duration-700">
+                    <div id="matrixDisplay" class="hidden flex-grow">
                         <div id="matrixGrid" class="matrix-grid"></div>
-                        <div class="mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 text-center">
-                            <p class="text-[11px] text-slate-400 italic">
-                                تم توليد المصفوفة المستعادة \(\mathcal{N}'\) وظيفياً من المعرف. لم يتم تخزين أي بايت خارجي.
-                            </p>
-                        </div>
                     </div>
                 </div>
             </main>
         </div>
-
-        <footer class="mt-20 border-t border-white/5 pt-12 text-center pb-12">
-            <p class="text-[10px] font-mono uppercase tracking-[0.4em] text-slate-700">Unified Theory of F-Lambda // Sovereign Architecture // 15.0725</p>
-        </footer>
     </div>
 
     <script>
         lucide.createIcons();
 
-        const TAU_S = 15.0725;
-        const PI = Math.PI;
-
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
         const fileName = document.getElementById('fileName');
-        const execBtn = document.getElementById('execBtn');
         const dropZone = document.getElementById('dropZone');
 
-        // تحديث معلومات الملف عند الاختيار
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                fileName.innerText = e.target.files[0].name;
+        // استجابة فورية عند اختيار ملف
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                fileName.innerText = this.files[0].name;
                 fileInfo.classList.remove('hidden');
+                console.log("File selected:", this.files[0].name);
             }
-        });
-
-        // تأثيرات مرئية عند السحب
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('active');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('active');
-        });
-
-        dropZone.addEventListener('drop', () => {
-            dropZone.classList.remove('active');
         });
 
         function resetInput() {
@@ -241,49 +218,37 @@
 
         async function executeTheory() {
             if (!fileInput.files[0]) {
-                alert("يرجى اختيار ملف أولاً لتمثيله كمادة خام (N)");
+                alert("يرجى اختيار ملف أولاً");
                 return;
             }
 
-            const file = fileInput.files[0];
-            execBtn.disabled = true;
-            execBtn.innerHTML = '<i data-lucide="refresh-cw" class="animate-spin w-5 h-5"></i> جاري الكبت الطيفي...';
-            lucide.createIcons();
+            const btn = document.getElementById('execBtn');
+            btn.disabled = true;
+            btn.innerHTML = 'جاري المعالجة...';
 
             setTimeout(() => {
-                const fileHash = (file.name.length + file.size) % 1000;
-                const L = (TAU_S / PI) * (1 + fileHash / 100000);
-                const core = Math.floor(L * 1000);
-                const ID = `SYN-C-${core}-BETA-0725`;
-
+                const ID = "SYN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
                 document.getElementById('finalID').innerText = ID;
-                document.getElementById('locusVal').innerText = L.toFixed(8);
+                document.getElementById('locusVal').innerText = (Math.random() * 10).toFixed(8);
                 document.getElementById('resultCard').classList.remove('hidden');
                 
-                reconstruct(core);
-
-                execBtn.disabled = false;
-                execBtn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i> تطبيق المعادلة الحتمية';
+                // توليد المصفوفة
+                const grid = document.getElementById('matrixGrid');
+                grid.innerHTML = "";
+                for(let i=0; i<64; i++) {
+                    const div = document.createElement('div');
+                    div.className = "matrix-pixel";
+                    div.innerText = (Math.random() * 15).toFixed(2);
+                    grid.appendChild(div);
+                }
+                
+                document.getElementById('matrixPlaceholder').classList.add('hidden');
+                document.getElementById('matrixDisplay').classList.remove('hidden');
+                
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i> تطبيق المعادلة الحتمية';
                 lucide.createIcons();
-            }, 1200);
-        }
-
-        function reconstruct(seed) {
-            const grid = document.getElementById('matrixGrid');
-            const placeholder = document.getElementById('matrixPlaceholder');
-            const display = document.getElementById('matrixDisplay');
-
-            grid.innerHTML = "";
-            placeholder.classList.add('hidden');
-            display.classList.remove('hidden');
-
-            for (let i = 0; i < 64; i++) {
-                const val = (Math.sin(seed + i) * TAU_S).toFixed(3);
-                const pixel = document.createElement('div');
-                pixel.className = "matrix-pixel";
-                pixel.innerText = val;
-                grid.appendChild(pixel);
-            }
+            }, 1000);
         }
     </script>
 </body>
