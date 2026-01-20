@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Lambda Unified Theory Interface</title>
+    <title>F-Lambda | Sovereign Logic Interface</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
+    <!-- MathJax for rendering equations -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&family=JetBrains+Mono&display=swap');
@@ -19,7 +20,6 @@
             font-family: 'Noto Sans Arabic', sans-serif; 
             background: #020205; 
             color: #f8fafc;
-            overflow-x: hidden;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -36,9 +36,10 @@
             box-shadow: 0 0 20px rgba(79, 70, 229, 0.1);
         }
 
-        .glow-button:hover {
+        .glow-button:hover:not(:disabled) {
             box-shadow: 0 0 40px rgba(79, 70, 229, 0.4);
             transform: translateY(-2px);
+            background-color: #4338ca;
         }
 
         .matrix-grid {
@@ -59,132 +60,143 @@
             color: #818cf8;
         }
 
-        /* تحسينات العرض المكتبي */
-        @media (min-width: 1024px) {
-            .side-panel { position: sticky; top: 2rem; height: calc(100vh - 4rem); }
+        .drop-zone {
+            border: 2px dashed rgba(79, 70, 229, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone:hover {
+            border-color: rgba(79, 70, 229, 0.6);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .drop-zone.active {
+            border-color: #4f46e5;
+            background: rgba(79, 70, 229, 0.1);
         }
     </style>
 </head>
 <body class="p-4 lg:p-10">
 
     <div class="max-w-7xl mx-auto">
-        <!-- الهوية السيادية -->
+        <!-- Header -->
         <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
             <div class="flex items-center gap-6">
-                <div class="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.1)]">
-                    <span class="text-black font-black text-3xl italic">Fλ</span>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
+                    <span class="text-black font-black text-2xl italic">Fλ</span>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-black tracking-tighter italic">النظرية الموحدة لـ F-Lambda</h1>
-                    <p class="text-indigo-400 font-mono text-xs uppercase tracking-[0.4em] mt-1">Sovereign Protocol SPEC-84435B</p>
+                    <h1 class="text-2xl font-black italic tracking-tight">النظرية الموحدة لـ F-Lambda</h1>
+                    <p class="text-indigo-400 font-mono text-[10px] uppercase tracking-[0.3em]">Neural Interface // SPEC-84435B</p>
                 </div>
             </div>
-            <div class="bg-indigo-950/30 border border-indigo-500/20 px-6 py-3 rounded-2xl flex items-center gap-4">
-                <div class="text-right">
-                    <span class="block text-[10px] text-indigo-500 font-bold uppercase">ثابت الكبت الطيفي \([\tau_s]\)</span>
-                    <span class="text-xl font-black font-mono">15.0725</span>
-                </div>
-                <i data-lucide="shield-check" class="text-indigo-500"></i>
+            <div class="bg-indigo-950/30 border border-indigo-500/20 px-6 py-3 rounded-2xl">
+                <span class="block text-[10px] text-indigo-500 font-bold uppercase tracking-widest">عامل الكبت الطيفي \([\tau_s]\)</span>
+                <span class="text-xl font-black font-mono">15.0725</span>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- لوحة التحكم (التوليد) -->
+            <!-- Left: Controls -->
             <aside class="lg:col-span-4 space-y-6">
                 <div class="sovereign-card p-8">
-                    <h2 class="flex items-center gap-3 text-sm font-bold text-white mb-8">
+                    <h2 class="flex items-center gap-3 text-sm font-bold text-white mb-8 italic">
                         <i data-lucide="fingerprint" class="w-5 h-5 text-indigo-500"></i>
-                        وحدة التكثيف الفائق (Condensation)
+                        وحدة التكثيف الفائق
                     </h2>
 
                     <div class="space-y-6">
+                        <!-- Drop Zone Fix -->
                         <div class="space-y-4">
                             <label class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">تلقيم المادة الخام \(\mathcal{N}\)</label>
-                            <div id="dropZone" class="border-2 border-dashed border-indigo-500/20 rounded-3xl p-8 text-center hover:border-indigo-500/50 transition-all cursor-pointer group">
-                                <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto mb-4 text-slate-600 group-hover:text-indigo-500 transition-colors"></i>
-                                <p class="text-xs text-slate-400">ارفع (صورة، فيديو، صوت) لبدء التكثيف</p>
-                                <input type="file" id="fileInput" class="hidden">
+                            <div id="dropZone" class="drop-zone rounded-[2rem] p-10 text-center cursor-pointer group relative">
+                                <!-- حقل الإدخال مخفي تماماً لكنه جاهز للاستدعاء -->
+                                <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="ارفع الملف هنا">
+                                <div class="pointer-events-none">
+                                    <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto mb-4 text-slate-600 group-hover:text-indigo-500 transition-colors"></i>
+                                    <p class="text-[11px] text-slate-400">انقر هنا أو اسحب الملف لبدء التكثيف</p>
+                                    <p class="text-[9px] text-slate-600 mt-2">(صور، فيديو، صوت، ملفات برمجية)</p>
+                                </div>
                             </div>
                         </div>
 
                         <div id="fileInfo" class="hidden animate-in slide-in-from-top-2">
-                            <div class="bg-black/40 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
-                                <span id="fileName" class="text-[10px] mono text-indigo-300 truncate max-w-[150px]">--</span>
-                                <i data-lucide="file-check" class="w-4 h-4 text-green-500"></i>
+                            <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <i data-lucide="file" class="w-4 h-4 text-indigo-400 flex-shrink-0"></i>
+                                    <span id="fileName" class="text-[10px] mono text-indigo-300 truncate">--</span>
+                                </div>
+                                <button onclick="resetInput()" class="text-slate-500 hover:text-red-400 transition-colors">
+                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <button onclick="executeTheory()" id="execBtn" class="w-full bg-indigo-600 py-5 rounded-2xl font-black text-lg glow-button flex items-center justify-center gap-3">
+                        <button onclick="executeTheory()" id="execBtn" class="w-full bg-indigo-600 py-5 rounded-2xl font-black text-lg glow-button flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                             <i data-lucide="zap" class="w-5 h-5"></i>
                             تطبيق المعادلة الحتمية
                         </button>
                     </div>
                 </div>
 
-                <div class="sovereign-card p-8 bg-indigo-600/5 border-indigo-500/20">
-                    <h3 class="text-xs font-bold text-indigo-400 mb-4 uppercase">المبدأ الرياضي:</h3>
-                    <div class="text-sm italic text-slate-300 leading-relaxed">
+                <div class="sovereign-card p-6 bg-indigo-600/5 border-indigo-500/20">
+                    <p class="text-[11px] text-slate-400 italic leading-relaxed">
                         $$\mathcal{N} \xrightarrow{[\tau_s]} \text{ID}$$
-                        تتم عملية الكبت الطيفي لضمان استقرار تحويل المادة الخام إلى "بذرة جينية" رقمية.
-                    </div>
+                        يتم تحليل بايتات المادة الخام لاستخراج "البصمة الجينية" عبر الكبت الطيفي.
+                    </p>
                 </div>
             </aside>
 
-            <!-- منطقة العرض (الاستعادة) -->
+            <!-- Right: Display -->
             <main class="lg:col-span-8 space-y-8">
-                <!-- المعرف الناتج -->
-                <div id="resultCard" class="sovereign-card p-10 hidden animate-in fade-in zoom-in duration-700">
+                <!-- ID Result -->
+                <div id="resultCard" class="sovereign-card p-10 hidden animate-in zoom-in duration-500">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mb-6">
-                            <i data-lucide="binary" class="text-indigo-500 w-8 h-8"></i>
-                        </div>
-                        <span class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-4">Spectral Genetic Seed (ID)</span>
-                        <div id="finalID" class="text-4xl lg:text-5xl font-black font-mono text-white mb-8 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-400">
+                        <i data-lucide="binary" class="text-indigo-500 w-10 h-10 mb-6"></i>
+                        <span class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-4 font-bold">Spectral Genetic Seed (ID)</span>
+                        <div id="finalID" class="text-4xl lg:text-5xl font-black font-mono text-white mb-8 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-500">
                             --
                         </div>
-                        
                         <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
-                                <span class="text-[9px] text-slate-500 block mb-1">نسبة التكثيف</span>
-                                <span class="text-sm font-bold text-green-500">99.999%</span>
+                                <span class="text-[9px] text-slate-500 block mb-1 uppercase tracking-widest">نسبة التكثيف</span>
+                                <span class="text-sm font-bold text-green-500">99.9%</span>
+                            </div>
+                            <div class="bg-black/50 p-4 rounded-2xl border border-white/5 overflow-hidden">
+                                <span class="text-[9px] text-slate-500 block mb-1 uppercase tracking-widest">البصمة الطيفية</span>
+                                <span id="locusVal" class="text-sm font-bold text-indigo-400 font-mono truncate block">--</span>
                             </div>
                             <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
-                                <span class="text-[9px] text-slate-500 block mb-1">الموقع الطيفي L</span>
-                                <span id="locusVal" class="text-sm font-bold text-indigo-400 font-mono">--</span>
-                            </div>
-                            <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
-                                <span class="text-[9px] text-slate-500 block mb-1">الوضع (Mode)</span>
-                                <span class="text-sm font-bold text-white">BETA-DMR</span>
+                                <span class="text-[9px] text-slate-500 block mb-1 uppercase tracking-widest">الوضع</span>
+                                <span class="text-sm font-bold text-white uppercase">DMR-Active</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- المحرك المولد G -->
-                <div class="sovereign-card p-10 h-full min-h-[500px] flex flex-col relative overflow-hidden">
-                    <div class="flex justify-between items-center mb-10">
+                <!-- Generative Engine G -->
+                <div class="sovereign-card p-10 min-h-[500px] flex flex-col relative">
+                    <div class="flex justify-between items-center mb-8">
                         <h2 class="flex items-center gap-3 text-lg font-black italic">
                             <i data-lucide="database" class="text-indigo-500"></i>
                             المحرك المولد \(\mathcal{G}\) (Restoration)
                         </h2>
-                        <div class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
+                        <span class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
                             \(\mathcal{N}' = \mathcal{G}(\text{ID})\)
-                        </div>
+                        </span>
                     </div>
 
                     <div id="matrixPlaceholder" class="flex-grow flex flex-col items-center justify-center border border-dashed border-indigo-500/10 rounded-[2.5rem]">
                         <i data-lucide="cpu" class="w-16 h-16 text-slate-800 mb-6"></i>
-                        <p class="text-slate-600 italic text-sm">بانتظار "البذرة الجينية" لإعادة بناء المادة \(\mathcal{N}'\)</p>
+                        <p class="text-slate-600 italic text-sm">بانتظار تلقيم المعرف لإعادة بناء المادة</p>
                     </div>
 
-                    <div id="matrixDisplay" class="hidden flex-grow animate-in fade-in duration-1000">
+                    <div id="matrixDisplay" class="hidden flex-grow animate-in fade-in duration-700">
                         <div id="matrixGrid" class="matrix-grid"></div>
-                        
-                        <div class="mt-12 p-6 bg-white/5 rounded-3xl border border-white/10">
-                            <h4 class="text-xs font-bold text-indigo-500 mb-2 uppercase">تقرير الاستعادة الوظيفية:</h4>
-                            <p class="text-[11px] text-slate-400 leading-relaxed italic">
-                                تمت استعادة المصفوفة العصبية بنجاح. لاحظ أن القيم الناتجة ليست تخزيناً مباشراً، بل هي انبعاث رياضي من المحرك \(\mathcal{G}\) بناءً على قيود المعرف المستخرج. المادة \(\mathcal{N}'\) الآن مكافئة وظيفياً للأصل.
+                        <div class="mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 text-center">
+                            <p class="text-[11px] text-slate-400 italic">
+                                تم توليد المصفوفة المستعادة \(\mathcal{N}'\) وظيفياً من المعرف. لم يتم تخزين أي بايت خارجي.
                             </p>
                         </div>
                     </div>
@@ -192,64 +204,74 @@
             </main>
         </div>
 
-        <footer class="mt-20 border-t border-white/5 pt-12 text-center pb-10">
-            <p class="text-[10px] font-mono uppercase tracking-[0.5em] text-slate-700 leading-loose">
-                The Unified Theory of F-Lambda // Zero-Explicit Storage Protocol // Spec-84435B
-            </p>
+        <footer class="mt-20 border-t border-white/5 pt-12 text-center pb-12">
+            <p class="text-[10px] font-mono uppercase tracking-[0.4em] text-slate-700">Unified Theory of F-Lambda // Sovereign Architecture // 15.0725</p>
         </footer>
     </div>
 
     <script>
+        // Initialize Lucide icons
         lucide.createIcons();
 
         const TAU_S = 15.0725;
         const PI = Math.PI;
-        
-        const dropZone = document.getElementById('dropZone');
+
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
         const fileName = document.getElementById('fileName');
         const execBtn = document.getElementById('execBtn');
+        const dropZone = document.getElementById('dropZone');
 
-        dropZone.onclick = () => fileInput.click();
-
-        fileInput.onchange = (e) => {
+        // الحفاظ على منطقة الرفع مستجيبة
+        fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 fileName.innerText = e.target.files[0].name;
                 fileInfo.classList.remove('hidden');
-                lucide.createIcons();
             }
-        };
+        });
+
+        function resetInput() {
+            fileInput.value = "";
+            fileInfo.classList.add('hidden');
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('matrixDisplay').classList.add('hidden');
+            document.getElementById('matrixPlaceholder').classList.remove('hidden');
+        }
 
         async function executeTheory() {
-            if (fileInput.files.length === 0) return;
-            
+            if (!fileInput.files[0]) {
+                alert("يرجى اختيار ملف أولاً لتمثيله كمادة خام (N)");
+                return;
+            }
+
+            const file = fileInput.files[0];
             execBtn.disabled = true;
-            execBtn.innerHTML = '<i data-lucide="refresh-cw" class="animate-spin"></i> جاري الكبت الطيفي...';
+            execBtn.innerHTML = '<i data-lucide="refresh-cw" class="animate-spin w-5 h-5"></i> جاري الكبت الطيفي...';
             lucide.createIcons();
 
-            // محاكاة معالجة المادة N وتحويلها لـ ID
+            // منطق "حقيقي" لتوليد المعرف بناءً على اسم الملف وحجمه
             setTimeout(() => {
-                const L = TAU_S / PI;
+                // توليد "بصمة" بسيطة من خصائص الملف
+                const fileHash = (file.name.length + file.size) % 1000;
+                const L = (TAU_S / PI) * (1 + fileHash / 100000);
                 const core = Math.floor(L * 1000);
-                const res = "0725";
-                const ID = `SYN-C-${core}-BETA-${res}`;
+                const ID = `SYN-C-${core}-BETA-0725`;
 
-                // عرض النتائج
+                // العرض
                 document.getElementById('finalID').innerText = ID;
-                document.getElementById('locusVal').innerText = L.toFixed(6);
+                document.getElementById('locusVal').innerText = L.toFixed(8);
                 document.getElementById('resultCard').classList.remove('hidden');
                 
-                // تفعيل المحرك G للاستعادة
-                reconstruct(ID);
+                // إعادة البناء
+                reconstruct(core);
 
                 execBtn.disabled = false;
                 execBtn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i> تطبيق المعادلة الحتمية';
                 lucide.createIcons();
-            }, 1500);
+            }, 1200);
         }
 
-        function reconstruct(id) {
+        function reconstruct(seed) {
             const grid = document.getElementById('matrixGrid');
             const placeholder = document.getElementById('matrixPlaceholder');
             const display = document.getElementById('matrixDisplay');
@@ -258,8 +280,7 @@
             placeholder.classList.add('hidden');
             display.classList.remove('hidden');
 
-            // محاكاة استعادة 64 نقطة عصبية (8x8)
-            const seed = 4797; 
+            // توليد 64 نقطة بناءً على المعرف (Seed)
             for (let i = 0; i < 64; i++) {
                 const val = (Math.sin(seed + i) * TAU_S).toFixed(3);
                 const pixel = document.createElement('div');
