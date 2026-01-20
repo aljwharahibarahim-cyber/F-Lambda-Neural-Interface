@@ -9,79 +9,29 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&family=JetBrains+Mono&display=swap');
-        
-        :root {
-            --tau-s: 15.0725;
-            --primary: #4f46e5;
-        }
-
-        body { 
-            font-family: 'Noto Sans Arabic', sans-serif; 
-            background: #020205; 
-            color: #f8fafc;
-        }
-
+        body { font-family: 'Noto Sans Arabic', sans-serif; background: #020205; color: #f8fafc; margin: 0; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-
         .sovereign-card {
             background: linear-gradient(145deg, rgba(10, 10, 20, 0.8), rgba(5, 5, 10, 0.9));
             border: 1px solid rgba(79, 70, 229, 0.1);
             backdrop-filter: blur(20px);
             border-radius: 2.5rem;
         }
-
-        .glow-button {
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(79, 70, 229, 0.1);
-        }
-
-        .glow-button:hover:not(:disabled) {
-            box-shadow: 0 0 40px rgba(79, 70, 229, 0.4);
-            transform: translateY(-2px);
-            background-color: #4338ca;
-        }
-
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 4px;
-        }
-
-        .matrix-pixel {
-            aspect-ratio: 1;
-            border-radius: 4px;
-            font-size: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(79, 70, 229, 0.05);
-            border: 1px solid rgba(79, 70, 229, 0.1);
-            color: #818cf8;
-        }
-
         .drop-zone {
             border: 2px dashed rgba(79, 70, 229, 0.2);
             transition: all 0.3s ease;
+            cursor: pointer;
             position: relative;
-            cursor: pointer;
         }
-
-        .drop-zone:hover {
-            border-color: rgba(79, 70, 229, 0.6);
-            background: rgba(79, 70, 229, 0.05);
+        .drop-zone:hover { border-color: #4f46e5; background: rgba(79, 70, 229, 0.05); }
+        .matrix-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+        .matrix-pixel {
+            aspect-ratio: 1; border-radius: 4px; font-size: 8px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(79, 70, 229, 0.05); border: 1px solid rgba(79, 70, 229, 0.1); color: #818cf8;
         }
-
-        /* هذا الجزء يضمن أن حقل الرفع يملأ المساحة تماماً ويكون فوق كل شيء */
-        #fileInput {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 100;
-        }
+        /* منع التفاعل مع العناصر الداخلية لضمان وصول النقرة للـ div الرئيسي */
+        .no-click { pointer-events: none; }
     </style>
 </head>
 <body class="p-4 lg:p-10">
@@ -97,47 +47,36 @@
                     <p class="text-indigo-400 font-mono text-[10px] uppercase tracking-[0.3em]">Neural Interface // SPEC-84435B</p>
                 </div>
             </div>
-            <div class="bg-indigo-950/30 border border-indigo-500/20 px-6 py-3 rounded-2xl">
-                <span class="block text-[10px] text-indigo-500 font-bold uppercase tracking-widest">عامل الكبت الطيفي \([\tau_s]\)</span>
-                <span class="text-xl font-black font-mono">15.0725</span>
-            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <aside class="lg:col-span-4 space-y-6">
                 <div class="sovereign-card p-8">
-                    <h2 class="flex items-center gap-3 text-sm font-bold text-white mb-8 italic">
-                        <i data-lucide="fingerprint" class="w-5 h-5 text-indigo-500"></i>
-                        وحدة التكثيف الفائق
-                    </h2>
-
                     <div class="space-y-6">
                         <div class="space-y-4">
                             <label class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">تلقيم المادة الخام \(\mathcal{N}\)</label>
                             
-                            <div id="dropZone" class="drop-zone rounded-[2rem] p-10 text-center">
-                                <input type="file" id="fileInput" title="">
-                                <div class="pointer-events-none">
+                            <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(this)">
+                            
+                            <div onclick="triggerUpload()" class="drop-zone rounded-[2rem] p-10 text-center" id="dropArea">
+                                <div class="no-click">
                                     <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto mb-4 text-slate-600"></i>
-                                    <p class="text-[11px] text-slate-400">انقر هنا أو اسحب الملف لبدء التكثيف</p>
-                                    <p class="text-[9px] text-slate-600 mt-2">(صور، فيديو، صوت، ملفات برمجية)</p>
+                                    <p class="text-[11px] text-slate-400">انقر هنا لاختيار المادة</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="fileInfo" class="hidden">
-                            <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <i data-lucide="file" class="w-4 h-4 text-indigo-400"></i>
-                                    <span id="fileName" class="text-[10px] mono text-indigo-300 truncate">--</span>
-                                </div>
-                                <button onclick="resetInput()" class="text-slate-500 hover:text-red-400 z-[110] relative">
-                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
-                                </button>
+                        <div id="fileInfo" class="hidden bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <i data-lucide="file" class="w-4 h-4 text-indigo-400"></i>
+                                <span id="fileName" class="text-[10px] mono text-indigo-300 truncate">--</span>
                             </div>
+                            <button type="button" onclick="resetInput()" class="text-slate-500 hover:text-red-400">
+                                <i data-lucide="x-circle" class="w-4 h-4"></i>
+                            </button>
                         </div>
 
-                        <button onclick="executeTheory()" id="execBtn" class="w-full bg-indigo-600 py-5 rounded-2xl font-black text-lg glow-button flex items-center justify-center gap-3">
+                        <button onclick="executeTheory()" id="execBtn" class="w-full bg-indigo-600 py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3">
                             <i data-lucide="zap" class="w-5 h-5"></i>
                             تطبيق المعادلة الحتمية
                         </button>
@@ -148,42 +87,16 @@
             <main class="lg:col-span-8 space-y-8">
                 <div id="resultCard" class="sovereign-card p-10 hidden">
                     <div class="flex flex-col items-center text-center">
-                        <i data-lucide="binary" class="text-indigo-500 w-10 h-10 mb-6"></i>
-                        <span class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-4 font-bold">Spectral Genetic Seed (ID)</span>
-                        <div id="finalID" class="text-4xl lg:text-5xl font-black font-mono text-white mb-8 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-500">
-                            --
-                        </div>
-                        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
-                                <span class="text-[9px] text-slate-500 block mb-1 uppercase tracking-widest">نسبة التكثيف</span>
-                                <span class="text-sm font-bold text-green-500">99.9%</span>
-                            </div>
-                            <div class="bg-black/50 p-4 rounded-2xl border border-white/5 overflow-hidden">
-                                <span class="text-[9px] text-slate-500 block mb-1 uppercase tracking-widest">البصمة الطيفية</span>
-                                <span id="locusVal" class="text-sm font-bold text-indigo-400 font-mono truncate block">--</span>
-                            </div>
-                            <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
-                                <span class="text-[9px] text-slate-500 block mb-1 uppercase tracking-widest">الوضع</span>
-                                <span class="text-sm font-bold text-white uppercase">DMR-Active</span>
-                            </div>
-                        </div>
+                        <span class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-4">Spectral ID</span>
+                        <div id="finalID" class="text-4xl font-black font-mono text-white mb-8">--</div>
                     </div>
                 </div>
 
-                <div class="sovereign-card p-10 min-h-[500px] flex flex-col relative">
-                    <div class="flex justify-between items-center mb-8">
-                        <h2 class="flex items-center gap-3 text-lg font-black italic">
-                            <i data-lucide="database" class="text-indigo-500"></i>
-                            المحرك المولد \(\mathcal{G}\)
-                        </h2>
+                <div class="sovereign-card p-10 min-h-[400px]">
+                    <div id="matrixPlaceholder" class="flex flex-col items-center justify-center h-full">
+                        <p class="text-slate-600 italic text-sm mt-40">بانتظار المادة الخام...</p>
                     </div>
-
-                    <div id="matrixPlaceholder" class="flex-grow flex flex-col items-center justify-center border border-dashed border-indigo-500/10 rounded-[2.5rem]">
-                        <i data-lucide="cpu" class="w-16 h-16 text-slate-800 mb-6"></i>
-                        <p class="text-slate-600 italic text-sm">بانتظار تلقيم المعرف لإعادة بناء المادة</p>
-                    </div>
-
-                    <div id="matrixDisplay" class="hidden flex-grow">
+                    <div id="matrixDisplay" class="hidden">
                         <div id="matrixGrid" class="matrix-grid"></div>
                     </div>
                 </div>
@@ -192,63 +105,63 @@
     </div>
 
     <script>
+        // تفعيل الأيقونات
         lucide.createIcons();
 
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const dropZone = document.getElementById('dropZone');
+        // دالة تشغيل واجهة اختيار الملفات
+        function triggerUpload() {
+            document.getElementById('fileInput').click();
+        }
 
-        // استجابة فورية عند اختيار ملف
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                fileName.innerText = this.files[0].name;
-                fileInfo.classList.remove('hidden');
-                console.log("File selected:", this.files[0].name);
+        // دالة معالجة الملف المختار فوراً
+        function handleFileSelect(input) {
+            const fileInfo = document.getElementById('fileInfo');
+            const fileNameSpan = document.getElementById('fileName');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                fileNameSpan.innerText = file.name; // عرض اسم الملف
+                fileInfo.classList.remove('hidden'); // إظهار قسم المعلومات
+                console.log("تم تحميل الملف بنجاح:", file.name);
             }
-        });
+        }
 
         function resetInput() {
-            fileInput.value = "";
-            fileInfo.classList.add('hidden');
+            document.getElementById('fileInput').value = "";
+            document.getElementById('fileInfo').classList.add('hidden');
             document.getElementById('resultCard').classList.add('hidden');
             document.getElementById('matrixDisplay').classList.add('hidden');
             document.getElementById('matrixPlaceholder').classList.remove('hidden');
         }
 
-        async function executeTheory() {
+        function executeTheory() {
+            const fileInput = document.getElementById('fileInput');
             if (!fileInput.files[0]) {
-                alert("يرجى اختيار ملف أولاً");
+                alert("يرجى اختيار ملف أولاً!");
                 return;
             }
 
             const btn = document.getElementById('execBtn');
-            btn.disabled = true;
-            btn.innerHTML = 'جاري المعالجة...';
-
+            btn.innerText = "جاري الكبت الطيفي...";
+            
             setTimeout(() => {
-                const ID = "SYN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+                const ID = "F-LAMBDA-" + Math.floor(Math.random() * 9999);
                 document.getElementById('finalID').innerText = ID;
-                document.getElementById('locusVal').innerText = (Math.random() * 10).toFixed(8);
                 document.getElementById('resultCard').classList.remove('hidden');
+                document.getElementById('matrixPlaceholder').classList.add('hidden');
+                document.getElementById('matrixDisplay').classList.remove('hidden');
                 
-                // توليد المصفوفة
                 const grid = document.getElementById('matrixGrid');
                 grid.innerHTML = "";
                 for(let i=0; i<64; i++) {
                     const div = document.createElement('div');
                     div.className = "matrix-pixel";
-                    div.innerText = (Math.random() * 15).toFixed(2);
+                    div.innerText = (Math.random() * 10).toFixed(2);
                     grid.appendChild(div);
                 }
-                
-                document.getElementById('matrixPlaceholder').classList.add('hidden');
-                document.getElementById('matrixDisplay').classList.remove('hidden');
-                
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i> تطبيق المعادلة الحتمية';
+                btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i> تطبيق المعادلة';
                 lucide.createIcons();
-            }, 1000);
+            }, 800);
         }
     </script>
 </body>
