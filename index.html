@@ -6,7 +6,6 @@
     <title>F-Lambda | Sovereign Logic Interface</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
-    <!-- MathJax for rendering equations -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;600;900&family=JetBrains+Mono&display=swap');
@@ -63,11 +62,7 @@
         .drop-zone {
             border: 2px dashed rgba(79, 70, 229, 0.2);
             transition: all 0.3s ease;
-        }
-
-        .drop-zone:hover {
-            border-color: rgba(79, 70, 229, 0.6);
-            background: rgba(79, 70, 229, 0.05);
+            position: relative;
         }
 
         .drop-zone.active {
@@ -79,7 +74,6 @@
 <body class="p-4 lg:p-10">
 
     <div class="max-w-7xl mx-auto">
-        <!-- Header -->
         <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
             <div class="flex items-center gap-6">
                 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
@@ -98,7 +92,6 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Left: Controls -->
             <aside class="lg:col-span-4 space-y-6">
                 <div class="sovereign-card p-8">
                     <h2 class="flex items-center gap-3 text-sm font-bold text-white mb-8 italic">
@@ -107,13 +100,11 @@
                     </h2>
 
                     <div class="space-y-6">
-                        <!-- Drop Zone Fix -->
                         <div class="space-y-4">
                             <label class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">تلقيم المادة الخام \(\mathcal{N}\)</label>
-                            <div id="dropZone" class="drop-zone rounded-[2rem] p-10 text-center cursor-pointer group relative">
-                                <!-- حقل الإدخال مخفي تماماً لكنه جاهز للاستدعاء -->
-                                <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="ارفع الملف هنا">
-                                <div class="pointer-events-none">
+                            <div id="dropZone" class="drop-zone rounded-[2rem] p-10 text-center cursor-pointer group overflow-hidden">
+                                <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50" title="ارفع الملف هنا">
+                                <div class="pointer-events-none relative z-10">
                                     <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto mb-4 text-slate-600 group-hover:text-indigo-500 transition-colors"></i>
                                     <p class="text-[11px] text-slate-400">انقر هنا أو اسحب الملف لبدء التكثيف</p>
                                     <p class="text-[9px] text-slate-600 mt-2">(صور، فيديو، صوت، ملفات برمجية)</p>
@@ -127,7 +118,7 @@
                                     <i data-lucide="file" class="w-4 h-4 text-indigo-400 flex-shrink-0"></i>
                                     <span id="fileName" class="text-[10px] mono text-indigo-300 truncate">--</span>
                                 </div>
-                                <button onclick="resetInput()" class="text-slate-500 hover:text-red-400 transition-colors">
+                                <button type="button" onclick="resetInput()" class="text-slate-500 hover:text-red-400 transition-colors relative z-[60]">
                                     <i data-lucide="x-circle" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -148,9 +139,7 @@
                 </div>
             </aside>
 
-            <!-- Right: Display -->
             <main class="lg:col-span-8 space-y-8">
-                <!-- ID Result -->
                 <div id="resultCard" class="sovereign-card p-10 hidden animate-in zoom-in duration-500">
                     <div class="flex flex-col items-center text-center">
                         <i data-lucide="binary" class="text-indigo-500 w-10 h-10 mb-6"></i>
@@ -175,7 +164,6 @@
                     </div>
                 </div>
 
-                <!-- Generative Engine G -->
                 <div class="sovereign-card p-10 min-h-[500px] flex flex-col relative">
                     <div class="flex justify-between items-center mb-8">
                         <h2 class="flex items-center gap-3 text-lg font-black italic">
@@ -210,7 +198,6 @@
     </div>
 
     <script>
-        // Initialize Lucide icons
         lucide.createIcons();
 
         const TAU_S = 15.0725;
@@ -222,12 +209,26 @@
         const execBtn = document.getElementById('execBtn');
         const dropZone = document.getElementById('dropZone');
 
-        // الحفاظ على منطقة الرفع مستجيبة
+        // تحديث معلومات الملف عند الاختيار
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 fileName.innerText = e.target.files[0].name;
                 fileInfo.classList.remove('hidden');
             }
+        });
+
+        // تأثيرات مرئية عند السحب
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('active');
+        });
+
+        dropZone.addEventListener('drop', () => {
+            dropZone.classList.remove('active');
         });
 
         function resetInput() {
@@ -249,20 +250,16 @@
             execBtn.innerHTML = '<i data-lucide="refresh-cw" class="animate-spin w-5 h-5"></i> جاري الكبت الطيفي...';
             lucide.createIcons();
 
-            // منطق "حقيقي" لتوليد المعرف بناءً على اسم الملف وحجمه
             setTimeout(() => {
-                // توليد "بصمة" بسيطة من خصائص الملف
                 const fileHash = (file.name.length + file.size) % 1000;
                 const L = (TAU_S / PI) * (1 + fileHash / 100000);
                 const core = Math.floor(L * 1000);
                 const ID = `SYN-C-${core}-BETA-0725`;
 
-                // العرض
                 document.getElementById('finalID').innerText = ID;
                 document.getElementById('locusVal').innerText = L.toFixed(8);
                 document.getElementById('resultCard').classList.remove('hidden');
                 
-                // إعادة البناء
                 reconstruct(core);
 
                 execBtn.disabled = false;
@@ -280,7 +277,6 @@
             placeholder.classList.add('hidden');
             display.classList.remove('hidden');
 
-            // توليد 64 نقطة بناءً على المعرف (Seed)
             for (let i = 0; i < 64; i++) {
                 const val = (Math.sin(seed + i) * TAU_S).toFixed(3);
                 const pixel = document.createElement('div');
